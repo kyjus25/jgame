@@ -21,15 +21,15 @@ public class JGKeyboardManager {
 	private HashMap<KeyCodeCombination, List<FieldListener<KeyCodeCombination>>> comboListeners = new HashMap<>();
 	private HashMap<Event, List<FieldListener<KeyCode>>> listeners = new HashMap<>();
 	
-	
 	public JGKeyboardManager() {
-		JGame.sceneManager.activeScene.addListener((Scene b) -> {this.setScene(b);});
+		JGame.sceneManager.activeScene.addEventHandler((JGScene b) -> {this.setScene(b);});
 	}
 	
-	public void setScene(Scene scene) {
+	public void setScene(JGScene jgscene) {
 		System.out.println("Keyboard Manager got a value");
-		scene.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {
+		jgscene.scene.get().addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {
 			KeyCode key = event.getCode();
+			System.out.println(key);
 			if (eventListeners.containsKey(KeyEvent.KEY_PRESSED)) {
 				eventListeners.get(KeyEvent.KEY_PRESSED).forEach((n) -> n.changed(key));
 			}
@@ -68,7 +68,7 @@ public class JGKeyboardManager {
 //                gameActor.handleKeyEvent(k, true);
 //            }
 //        });
-		scene.addEventHandler(KeyEvent.KEY_RELEASED, (event) -> {
+		jgscene.scene.get().addEventHandler(KeyEvent.KEY_RELEASED, (event) -> {
 			KeyCode key = event.getCode();
 			if (eventListeners.containsKey(KeyEvent.KEY_RELEASED)) {
 				eventListeners.get(KeyEvent.KEY_RELEASED).forEach((n) -> n.changed(key));
@@ -90,7 +90,7 @@ public class JGKeyboardManager {
 //            }
         });
 	}
-
+	
 	public void addEventHandler(EventType<KeyEvent> eventType,  FieldListener<KeyCode> toAdd) {
 		if (eventListeners.containsKey(eventType)) {
 			eventListeners.get(eventType).add(toAdd);

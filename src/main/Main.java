@@ -3,7 +3,7 @@ package main;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import jgame.JGame;
-import main.Games.*;
+import main.GGame.GGame;
 
 public class Main extends Application {
 	@Override 
@@ -19,6 +19,6 @@ public class Main extends Application {
 		
 	   } 
    public static void main(String args[]){ 
-	      launch(args); 
-	   }
+      launch(args); 
+   }
 }

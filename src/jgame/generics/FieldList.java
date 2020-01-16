@@ -1,45 +1,39 @@
 package jgame.generics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import javafx.scene.Scene;
-
-public class FieldList<T>  {
+public class FieldList<T> extends ArrayList<T> {
+	private List<ListListener<T>> listeners = new ArrayList<ListListener<T>>();
 	
-//	private Field<List<T>> list = new Field<>(new ArrayList<T>());
-//	
-//	public FieldList()  {}
-//	
-//	public FieldList(List<T> value) {
-//		this.list.set(value);
-//		this.list.get().clear();
-//	}
-//	
-//	public FieldList(Field<List<T>> value) {
-//		this.list = value;
+	public boolean add(T value) {
+		boolean response = super.add(value);
+		listeners.forEach((n) -> n.changed(this, value));
+		return response;
+	}
+
+//	public boolean addAll(T value) {
+//		boolean response = super.addAll((Collection<? extends T>) value);
+//		listeners.forEach((n) -> n.changed(this, value));
+//		return response;
 //	}
 	
-//	public void add(T value) {
-//		this.list.get().add(value);
+//	public boolean remove(Object o) {
+//		System.out.println("removing " + o);
+//		boolean response = super.remove(o);
+//		listeners.forEach((n) -> n.changed(this));
+//		System.out.println("this " + this);
+//		return response;
 //	}
-//	
-//	public void remove(T value) {
-//		this.list.get().remove(value);
-//	}
-//	
-//    public void addAll(T... values) {
-//    	this.list.get().addAll(Arrays.asList(values));
-//    }
-//
-//    public void removeAll(T... values) {
-//    	this.list.get().removeAll(Arrays.asList(values));
-//    }
-//    
-//    public List<T> getAll() {
-//    	return this.list.get();
-//    }
-    
-
+	
+    public void addEventHandler(ListListener<T> toAdd) {
+//    	System.out.println("Listener Added");
+    	listeners.add(toAdd);
+        if (this != null) {
+        	toAdd.changed(this, null); 
+        }
+    }
 }
+
+
