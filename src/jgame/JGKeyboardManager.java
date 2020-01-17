@@ -12,86 +12,55 @@ import javafx.scene.input.KeyCodeCombination;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import jgame.generics.FieldListener;
+import jgame.generics.*;
+
 
 public class JGKeyboardManager {
 	
-	private HashMap<EventType<KeyEvent>, List<FieldListener<KeyCode>>> eventListeners = new HashMap<>();
+	private static HashMap<EventType<KeyEvent>, List<FieldListener<KeyCode>>> eventListeners = new HashMap<>();
 	private HashMap<KeyCode, List<FieldListener<KeyCode>>> keyListeners = new HashMap<>();
 	private HashMap<KeyCodeCombination, List<FieldListener<KeyCodeCombination>>> comboListeners = new HashMap<>();
-	private HashMap<Event, List<FieldListener<KeyCode>>> listeners = new HashMap<>();
+    private static List<KeyStateEvent> listeners = new ArrayList<KeyStateEvent>();
 	
 	public JGKeyboardManager() {
-		JGame.sceneManager.activeScene.addEventHandler((JGScene b) -> {this.setScene(b);});
+		JGame.sceneManager.scene.addEventHandler((Scene b) -> {this.setScene(b);});
 	}
 	
-	public void setScene(JGScene jgscene) {
-		System.out.println("Keyboard Manager got a value");
-		jgscene.scene.get().addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {
+	public void setScene(Scene scene) {
+		scene.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {
 			KeyCode key = event.getCode();
-			System.out.println(key);
 			if (eventListeners.containsKey(KeyEvent.KEY_PRESSED)) {
 				eventListeners.get(KeyEvent.KEY_PRESSED).forEach((n) -> n.changed(key));
 			}
-//			KeyCode key = event.getCode();
-//			listeners.forEach((n) -> n.changed(key));
+
 			if (keyListeners.containsKey(key)) {
 				keyListeners.get(key).forEach((n) -> n.changed(key));
 			}
-			
+
 			comboListeners.forEach((k , list) -> {
 				if (k.match(event)) {
 		            list.forEach((n) -> n.changed(k));
 		        }
 			});
 			
-//			if (keyState.containsKey(k)) {
-//				keyState.replace(k, true);
-//			} else {
-//				keyState.put(k, true);
-//			}
-//			
-//            for (Sprite gameActor : main.gameengine.Game.spriteManager.getAllSprites()) {
-//                gameActor.handleKeyEvent(k, true);
-//            }
+			listeners.forEach((item) -> {
+				item.changed(key, true);
+			});
         });
-//		this.scene = scene;
-//		this.scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
-//			KeyCode k = key.getCode();
-//			if (keyState.containsKey(k)) {
-//				keyState.replace(k, true);
-//			} else {
-//				keyState.put(k, true);
-//			}
-//			
-//            for (Sprite gameActor : main.gameengine.Game.spriteManager.getAllSprites()) {
-//                gameActor.handleKeyEvent(k, true);
-//            }
-//        });
-		jgscene.scene.get().addEventHandler(KeyEvent.KEY_RELEASED, (event) -> {
+
+		scene.addEventHandler(KeyEvent.KEY_RELEASED, (event) -> {
 			KeyCode key = event.getCode();
 			if (eventListeners.containsKey(KeyEvent.KEY_RELEASED)) {
 				eventListeners.get(KeyEvent.KEY_RELEASED).forEach((n) -> n.changed(key));
 			}
 			
-//			if (eventListeners.containsKey(KeyEvent.KEY_RELEASED)) {
-//				eventListeners.get(KeyEvent.KEY_RELEASED).forEach((n) -> n.changed(key));
-//			}
-		
-			
-//			KeyCode k = key.getCode();
-//			if (keyState.containsKey(k)) {
-//				keyState.replace(k, false);
-//			} else {
-//				keyState.put(k, false);
-//			}
-//            for (Sprite gameActor : main.gameengine.Game.spriteManager.getAllSprites()) {
-//        		gameActor.handleKeyEvent(k, false);
-//            }
+			listeners.forEach((item) -> {
+				item.changed(key, false);
+			});
         });
 	}
 	
-	public void addEventHandler(EventType<KeyEvent> eventType,  FieldListener<KeyCode> toAdd) {
+	public static void addEventHandler(EventType<KeyEvent> eventType,  FieldListener<KeyCode> toAdd) {
 		if (eventListeners.containsKey(eventType)) {
 			eventListeners.get(eventType).add(toAdd);
 			return;
@@ -120,8 +89,12 @@ public class JGKeyboardManager {
 		list.add(toAdd);
 		comboListeners.put(keyCode, list);		 
 	}
-}
 
+	public static void addEventHandler(KeyStateEvent toAdd) {
+		listeners.add(toAdd);
+	}
+	
+}
 
 
 

@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import jgame.generics.*;
 
-public abstract class JGame {
+public class JGame extends CommonControls {
 	static Field<Integer> width = new FieldEvent<>();
 	static Field<Integer> height = new FieldEvent<>();
 	static Field<Stage> stage = new FieldEvent<>();
@@ -19,26 +19,30 @@ public abstract class JGame {
 	protected static Field<String> title = new Field<>("JGame");
 	protected static FieldEvent<Boolean> debug = new FieldEvent<>(true);
 	protected static Field<Timeline> gameLoop = new Field<>();
-	protected static FieldEvent<ActionEvent> tick = new FieldEvent<>();
+	public static FieldEvent<ActionEvent> tick = new FieldEvent<>();
 	
-	protected static JGSceneManager sceneManager;
-	protected static JGKeyboardManager keyboardManager;
-	protected static JGSpriteManager spriteManager;
+	public static JGSceneManager sceneManager;
+	public static JGKeyboardManager keyboardManager;
+	public static JGSpriteManager spriteManager;
+	public static JGMenuBar menuBar;
 	
 	public JGame(final int fps, final String title, Stage stage, int width, int height) {
 		JGame.width.set(width);
 		JGame.height.set(height);
-		this.fps.set(fps);
-		this.title.set(title);
+		JGame.fps.set(fps);
+		JGame.title.set(title);
 		JGame.stage.set(stage);
 		JGame.stage.get().setTitle(this.title.get());
+		
+		
 		sceneManager = new JGSceneManager();
 		spriteManager = new JGSpriteManager();
 		keyboardManager = new JGKeyboardManager();
-		keyboardManager.addEventHandler(KeyEvent.KEY_PRESSED, (KeyCode k) -> this.handleKeyPress(k));
-		keyboardManager.addEventHandler(KeyEvent.KEY_RELEASED, (KeyCode k) -> this.handleKeyReleased(k));
-		tick.addEventHandler((event) -> this.handleTick(event));
+		menuBar = new JGMenuBar();
+		sceneManager.changeScenes(new JGScene("Default"));
+
 		JGame.stage.get().show();
+		initialize();
 		run();
 	}
 	
@@ -71,9 +75,4 @@ public abstract class JGame {
       gameLoop.get().play();
 //      gg.set();
     }
-	
-	public abstract void initialize(final Stage stage);
-	public void handleKeyPress(KeyCode key) {}
-	public void handleKeyReleased(KeyCode key) {}
-	public void handleTick(ActionEvent event) {}
 }

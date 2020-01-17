@@ -30,7 +30,7 @@ public class FieldList<T> extends ArrayList<T> {
     public void addEventHandler(ListListener<T> toAdd) {
 //    	System.out.println("Listener Added");
     	listeners.add(toAdd);
-        if (this != null) {
+        if (this.size() > 0 && this != null) {
         	toAdd.changed(this, null); 
         }
     }
