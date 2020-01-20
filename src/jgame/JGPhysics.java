@@ -2,10 +2,11 @@ package jgame;
 
 import java.util.function.Function;
 
+import jgame.generics.CommonControls;
 import jgame.generics.Field;
 import main.GGame.GGame;
 
-public class JGPhysics {
+public class JGPhysics extends CommonControls {
 	public Field<String> name = new Field<>();
 	public Field<Boolean> active = new Field<>();
 //	public Function handle;
@@ -20,6 +21,4 @@ public class JGPhysics {
 		this.active.set(active);
 		GGame.physicsManager.physicsList.add(this);
 	}
-	
-	public void handle(JGSprite sprite) {}
 }

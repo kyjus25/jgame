@@ -54,9 +54,6 @@ public class GLevel extends JGScene {
 //		player.addToScene();
 //		player.node.get().setTranslateX(-300);
 //		player.node.get().setTranslateY(-500);
-		
-		
-
 	}
 	
 	public void onKeyPress(KeyCode key) {

@@ -4,6 +4,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import jgame.JGPhysics;
 //import main.ID;
 //import main.gameengine.nodes.Item;
 import jgame.JGSprite;
@@ -14,6 +15,7 @@ public class Player extends JGSprite {
     public Player() {
     	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
     	canMove.set(true);
+    	active.set(true);
     	rectangle.setFill(Color.RED);
     	node.set(rectangle);
     	
@@ -37,7 +39,7 @@ public class Player extends JGSprite {
 		if (key == KeyCode.S) {velocityY.set(speed * 1.0);}
 		if (key == KeyCode.A) {velocityX.set(speed * -1.0);}
 		if (key == KeyCode.D) {velocityX.set(speed * 1.0);}
-		if (key == KeyCode.SPACE) {velocityY.set(-5.0);}
+		if (key == KeyCode.SPACE) {velocityY.set(-20.0);}
 	}
 	public void onKeyReleased(KeyCode key) {
 		if (key == KeyCode.W) {velocityY.set(0.0);}
@@ -61,4 +63,10 @@ public class Player extends JGSprite {
 //		System.out.println(node.get().getBoundsInLocal());
 //		positionY.set();
 	}
+	
+	public void onPhysics(JGSprite b, JGPhysics p) {
+		   b.velocityY.set(b.velocityY.get() + 1);
+		    if(b.velocityY.get() > 20){
+		        b.velocityY.set(20.0);
+		    }		}
 }

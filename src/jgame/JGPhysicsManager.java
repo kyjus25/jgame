@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import jgame.generics.FieldEvent;
 import jgame.generics.FieldList;
 import jgame.generics.FieldListener;
 import jgame.generics.KeyStateEvent;
@@ -17,15 +19,13 @@ public class JGPhysicsManager {
 	//  Class used to help manager movement of sprites
 	public FieldList<JGPhysics> physicsList = new FieldList<>();
 //	private static HashMap<JGPhysics, List<FieldListener<JGSprite>>> physicsList = new HashMap<>();
-
 	public JGPhysicsManager() {
 		JGame.tick.addEventHandler((tick) -> {
 			physicsList.stream().filter(i -> i.active.get().equals(true)).collect(Collectors.toList()).forEach(physics -> {
-				System.out.println(physics.name.get());
 				JGame.spriteManager.spriteList.stream().filter(i -> i.active.get().equals(true) && i.canMove.get().equals(true))
 				.collect(Collectors.toList()).forEach(sprite -> {
-					System.out.println(sprite);
-					physics.handle(sprite);
+					sprite.onPhysics(sprite, physics);
+//					physics.onPhysics(sprite, physics);
 				});
 			});
 			

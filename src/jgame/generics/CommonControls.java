@@ -35,4 +35,6 @@ public class CommonControls {
 	public void onCollision(JGSprite a, JGSprite b) {}
 
 	public void onCollision(JGSprite b) {}
+	
+	public void onPhysics(JGSprite sprite, JGPhysics physics) {}
 }
