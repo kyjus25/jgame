@@ -11,24 +11,27 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import jgame.JGLayer;
+import jgame.JGPhysics;
 import jgame.JGScene;
 
 public class GLevel extends JGScene {
 	
-	JGLayer l1 = new Layer1();
-	JGLayer l2 = new Layer2();
+	JGLayer background = new Layer1();
+	JGLayer ground = new Layer2();
 	JGLayer l3 = new Layer3();
 
 
 
 	public void initialize() {
 		System.out.println("GLevel initialize");
-		l1.zIndex.set(4);
-		l2.zIndex.set(2);
-		l3.zIndex.set(3);
+		JGPhysics gravity = new JGPhysics("gravity", true);
 		
-		layers.add(l1);
-		layers.add(l2);
+		background.zIndex.set(0);
+		ground.zIndex.set(1);
+		l3.zIndex.set(3);
+//		
+		layers.add(background);
+		layers.add(ground);
 		layers.add(l3);
 		
 		
@@ -57,6 +60,6 @@ public class GLevel extends JGScene {
 	}
 	
 	public void onKeyPress(KeyCode key) {
-		l1.zIndex.set(l1.zIndex.get()-1);
+//		l1.zIndex.set(l1.zIndex.get()-1);
 	}
 }

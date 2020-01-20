@@ -31,6 +31,7 @@ public class JGScene extends CommonControls {
 	public Field<StackPane> stackPane = new Field<>(new StackPane());
 	Field<Scene> scene = new Field<>(new Scene(this.stackPane.get(), JGame.width.get(), JGame.height.get()));
 	public Field<String> name = new Field<>("Default");
+	
 		
 	public JGScene() {
 		if (this.getClass().getSimpleName().toLowerCase() != null) {

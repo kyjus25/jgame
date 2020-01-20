@@ -11,8 +11,8 @@ import javafx.util.Duration;
 import jgame.generics.*;
 
 public class JGame extends CommonControls {
-	static Field<Integer> width = new FieldEvent<>();
-	static Field<Integer> height = new FieldEvent<>();
+	public static Field<Integer> width = new FieldEvent<>();
+	public static Field<Integer> height = new FieldEvent<>();
 	static Field<Stage> stage = new FieldEvent<>();
 
 	protected static Field<Integer> fps = new Field<>();
@@ -25,6 +25,7 @@ public class JGame extends CommonControls {
 	public static JGKeyboardManager keyboardManager;
 	public static JGSpriteManager spriteManager;
 	public static JGMenuBar menuBar;
+	public static JGPhysicsManager physicsManager;
 	
 	public JGame(final int fps, final String title, Stage stage, int width, int height) {
 		JGame.width.set(width);
@@ -40,6 +41,7 @@ public class JGame extends CommonControls {
 		keyboardManager = new JGKeyboardManager();
 		menuBar = new JGMenuBar();
 		sceneManager.changeScenes(new JGScene("Default"));
+		physicsManager = new JGPhysicsManager();
 
 		JGame.stage.get().show();
 		initialize();

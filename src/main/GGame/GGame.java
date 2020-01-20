@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import jgame.JGPhysics;
 import jgame.JGScene;
 import jgame.JGame;
 
@@ -56,6 +57,8 @@ public class GGame extends JGame {
 		System.out.println("GGAME initialize");
 		Circle circle = new Circle(150.0f, 150.0f, 80.f); 
 		
+		
+//		JGPhysics gravity = new JGPhysics("gravity", false);
 		
 		GLevel level1 = new GLevel();
 		JGScene level2 = new JGScene();
