@@ -1,0 +1,6 @@
+nick=Justin
+host=localhost
+playerType=paddle
+startX=40
+startY=260
+

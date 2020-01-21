@@ -62,7 +62,7 @@ public class JGMenuBar extends FieldReadOnly<MenuBar> {
 		
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction((event) -> {
-			JGame.stage.get().close();
+			JGame.exit();
 		});
 		
 		m.getItems().addAll(play, pause, stop, restart, exit);

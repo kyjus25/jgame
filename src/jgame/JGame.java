@@ -2,6 +2,7 @@ package jgame;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
@@ -26,6 +27,7 @@ public class JGame extends CommonControls {
 	public static JGSpriteManager spriteManager;
 	public static JGMenuBar menuBar;
 	public static JGPhysicsManager physicsManager;
+	public static JGNetworkManager networkManager;
 	
 	public JGame(final int fps, final String title, Stage stage, int width, int height) {
 		JGame.width.set(width);
@@ -34,18 +36,22 @@ public class JGame extends CommonControls {
 		JGame.title.set(title);
 		JGame.stage.set(stage);
 		JGame.stage.get().setTitle(this.title.get());
-		
-		
+
 		sceneManager = new JGSceneManager();
 		spriteManager = new JGSpriteManager();
 		keyboardManager = new JGKeyboardManager();
 		menuBar = new JGMenuBar();
 		sceneManager.changeScenes(new JGScene("Default"));
 		physicsManager = new JGPhysicsManager();
+		networkManager = new JGNetworkManager();
 
 		JGame.stage.get().show();
 		initialize();
 		run();
+
+		JGKeyboardManager.addEventHandler((key, isPressed) -> {
+			if (key.getName().equals("Esc") && isPressed) { JGame.exit(); }
+		});
 	}
 	
     private void run() {
@@ -77,4 +83,11 @@ public class JGame extends CommonControls {
       gameLoop.get().play();
 //      gg.set();
     }
+
+	public static void exit() {
+		JGame.networkManager.submit("EXIT");
+		JGame.stage.get().close();
+		Platform.exit();
+		System.exit(0);
+	}
 }
