@@ -1,15 +1,55 @@
 package main.GGame;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.animation.RotateTransition;
+import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import jgame.JGLayer;
 
 public class Layer3 extends JGLayer {
+	Player player;
+	
+	public Layer3() {
+		
+//		pane.get().getChildren().clear();
+//		pane.get().getChildren().add(player.node.get());
+	}
 	public void initialize() {
 		System.out.println("Layer3 initialize");
-//    	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
-//    	rectangle.setFill(Color.GREEN);
-		Player player = new Player();
-    	pane.get().getChildren().add(player.node.get());
+		pane.get().getChildren().clear();
+		player = new Player();
+		addToLayer(player.node.get());
 	}
+	
+	public void onMouseEvent(MouseEvent event, boolean isPressed) {
+		if (!isPressed) {
+			Bounds bounds = player.node.get().localToScene(player.node.get().getBoundsInLocal());
+			Arrow arrow = new Arrow(player.positionX.get() + 60, player.positionY.get());
+			addToLayer(arrow);
+//		    double angle = (float)Math.toDegrees(Math.atan2(event.getY() - player.positionY.get(), event.getX() - player.positionX.get()));
+//		    arrow.rotate.set(angle);
+//		    arrow.velocityY.set((angle * angle / angle) * -.1);
+//		    System.out.println("angle" + angle);
+
+		    
+			arrow.active.addEventHandler(isActive -> {
+				if (!isActive) {
+					removeFromLayer(arrow);
+				}
+			});
+		}
+	}
+	
+    public void onGameLoop(ActionEvent event) {
+    	
+//    	if (node != null) {
+//    		collidesWall();
+//    	}    	
+    }
 }

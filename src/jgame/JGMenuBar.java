@@ -55,9 +55,14 @@ public class JGMenuBar extends FieldReadOnly<MenuBar> {
 		MenuItem restart = new MenuItem("Restart");
 		restart.setOnAction((event) -> {
 //			JGame.stage.get().close();
+//			JGame.reset();
 			JGScene scene = JGame.sceneManager.activeScene.get();
+			JGame.sceneManager.changeScenes(scene);
+//			scene.reset();
+//			scene.initialize();
 //			scene = new JGScene(scene);
-			JGame.sceneManager.activeScene.get().initialize();
+//			scene.stackPane.get().getChildren().clear();
+//			JGame.sceneManager.activeScene.get().initialize();
 		});
 		
 		MenuItem exit = new MenuItem("Exit");

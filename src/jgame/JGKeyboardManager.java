@@ -91,12 +91,9 @@ public class JGKeyboardManager {
 	}
 
 	public static void addEventHandler(KeyStateEvent toAdd) {
-		listeners.add(toAdd);
+		if (!listeners.contains(toAdd)) {
+			listeners.add(toAdd);
+		}
 	}
 	
 }
-
-
-
-
-//	KeyCombination

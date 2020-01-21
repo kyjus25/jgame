@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jgame.generics.*;
+import main.GGame.GGame;
 import jgame.JGLayer;
 
 public class JGScene extends CommonControls {
@@ -29,10 +30,18 @@ public class JGScene extends CommonControls {
 //	List<JGLayer> layers = new ArrayList<JGLayer>();
 	private Group group = new Group();
 	public Field<StackPane> stackPane = new Field<>(new StackPane());
-	Field<Scene> scene = new Field<>(new Scene(this.stackPane.get(), JGame.width.get(), JGame.height.get()));
+	protected Field<Scene> scene = new Field<>(new Scene(this.stackPane.get(), JGame.width.get(), JGame.height.get()));
 	public Field<String> name = new Field<>("Default");
 	
-		
+	public void reset() {
+		stackPane.get().setTranslateX(0);
+		stackPane.get().setTranslateY(0);
+		group.getChildren().clear();
+		stackPane.get().getChildren().clear();
+		layers.clear();
+		GGame.spriteManager.spriteList.clear();
+		GGame.physicsManager.reset();
+	}	
 	public JGScene() {
 		if (this.getClass().getSimpleName().toLowerCase() != null) {
 			name.set(this.getClass().getSimpleName());

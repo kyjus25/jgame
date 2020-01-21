@@ -10,9 +10,10 @@ public class JGSprite extends CommonControls {
 	public FieldEvent<Double> positionY = new FieldEvent<>(0.0);
 	public Field<Double> velocityX = new Field<>(0.0);
 	public Field<Double> velocityY = new Field<>(0.0);
+	public FieldEvent<Double> rotate = new FieldEvent<>(0.0);
 	public Field<Double> width = new Field<>();
 	public Field<Double> height = new Field<>();
-	public Field<Boolean> active = new Field<>(true);
+	public FieldEvent<Boolean> active = new FieldEvent<>(false);
 	public Field<Boolean> canMove = new Field<>(false);
 	public Field<Node> node = new Field<>(new ImageView());
 
@@ -29,6 +30,8 @@ public class JGSprite extends CommonControls {
 //			}
 //		});
 		JGame.spriteManager.spriteList.add(this);
+		JGame.spriteManager.activeSprites.add(this);
+//		System.out.println(JGame.spriteManager.spriteList);
 		
 		positionX.addEventHandler((x) -> {
 			node.get().setTranslateX(x);
@@ -36,6 +39,10 @@ public class JGSprite extends CommonControls {
 		
 		positionY.addEventHandler((y) -> {
 			node.get().setTranslateY(y);
+		});
+		
+		rotate.addEventHandler((x) -> {
+			node.get().setRotate(x);
 		});
 	}
 	
@@ -47,6 +54,11 @@ public class JGSprite extends CommonControls {
 	public void addToScene() {
 		JGame.sceneManager.activeScene.get().stackPane.get().getChildren().add(node.get());
 		active.set(true);
+	}
+	
+	public void removeToScene() {
+		JGame.sceneManager.activeScene.get().stackPane.get().getChildren().remove(node.get());
+		active.set(false);
 	}
 	
 	public void update() {
@@ -65,4 +77,6 @@ public class JGSprite extends CommonControls {
     {
         return s.node.get().getBoundsInParent().intersects(node.get().getBoundsInParent());
     }
+    
+    public void onPhysics(JGPhysics p) {}
 }
