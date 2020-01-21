@@ -85,7 +85,7 @@ public class JGame extends CommonControls {
     }
 
 	public static void exit() {
-		JGame.networkManager.submit("EXIT");
+		try { JGame.networkManager.submit("EXIT"); } catch (Exception e) {}
 		JGame.stage.get().close();
 		Platform.exit();
 		System.exit(0);

@@ -8,30 +8,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.stream.Collectors;
 
-public class JGServer {
+public class JGServer implements Runnable  {
     public JGServer server;
     public Field<Boolean> running = new Field<>(false);
     public FieldList<JGUser> users = new FieldList<>();
 
-    public static void main(String[] args) throws IOException {
-        new JGServer();
-    }
-
-    public JGServer() {
-        try {
-            ServerSocket ss = new ServerSocket(80);
-            running.set(true);
-            while (running.get()) {
-                Socket socket = ss.accept();
-                System.out.println("Connection established" + socket.getInetAddress().getHostAddress());
-                JGUser user = new JGUser(socket, this);
-                addUser(user);
-                new Thread(user).start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) throws IOException {
+//        new Thread(new JGServer()).start();
+//    }
 
     public void addUser(JGUser u) {
         users.add(u);
@@ -53,6 +37,24 @@ public class JGServer {
         users.forEach(u -> {
             u.submit(s);
         });
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("Starting server");
+            ServerSocket ss = new ServerSocket(80);
+            running.set(true);
+            while (running.get()) {
+                Socket socket = ss.accept();
+                System.out.println("Connection established" + socket.getInetAddress().getHostAddress());
+                JGUser user = new JGUser(socket, this);
+                addUser(user);
+                new Thread(user).start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

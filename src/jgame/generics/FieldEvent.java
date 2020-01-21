@@ -14,7 +14,9 @@ public class FieldEvent<T> extends Field<T> {
     
     public void set(T value) {
     	super.set(value);
-        listeners.forEach((n) -> n.changed(this.get())); 
+        List<FieldListener<T>> copy = new ArrayList<FieldListener<T>>();
+        copy.addAll(listeners);
+        copy.forEach((n) -> n.changed(this.get()));
     }
     
     public void addEventHandler(FieldListener<T> toAdd) {

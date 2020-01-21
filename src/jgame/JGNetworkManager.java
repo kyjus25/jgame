@@ -1,6 +1,7 @@
 package jgame;
 
 import jgame.generics.Field;
+import jgame.generics.FieldEvent;
 import jgame.generics.FieldList;
 
 import java.io.*;
@@ -11,22 +12,51 @@ import java.util.stream.Collectors;
 
 public class JGNetworkManager {
 
+    private JGServer server;
+
     private Socket socket;
     private BufferedReader enter;
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Justin");
+    public JGUser self = new JGUser("Guy");
+    public Field<Boolean> hosting = new Field<>(true);
 
     public FieldList<JGUser> users = new FieldList<>();
 
+    public FieldEvent<String> packetStream = new FieldEvent<>();
+
     public JGNetworkManager() {
+
+        if (hosting.get()) {
+            server = new JGServer();
+            new Thread(server).start();
+
+//            JGame.tick.addEventHandler(tick -> {
+//                // System.out.println("tick");
+//            });
+
+            JGame.sceneManager.activeScene.addEventHandler(scene -> {
+                sendAll("SCENE " + scene.name.get());
+            });
+        }
+
+        JGame.tick.addEventHandler(tick -> {
+            if (packetStream.get().startsWith("SCENE") && !hosting.get()) {
+                String sceneName = packetStream.get().split("[ ]")[1];
+                JGame.sceneManager.changeSceneByName(sceneName);
+            }
+        });
+
+
+
         try {
             socket = new Socket("localhost", 80);
             enter = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             leave = new BufferedWriter(new PrintWriter(socket.getOutputStream()));
             running.set(true);
             submit("NICK " + self.nick.get());
+            JGame.stage.get().setTitle(self.nick.get());
 
             new Thread(new Runnable() {
                 @Override
@@ -39,6 +69,7 @@ public class JGNetworkManager {
             }).start();
         } catch (Exception e) {
             System.out.println("Server not responding");
+            JGame.exit();
         }
     }
 
@@ -53,7 +84,13 @@ public class JGNetworkManager {
                 }
             }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
-            if (!packet.isEmpty() && !packet.startsWith("Room") && !packet.startsWith("OK")) { handlePacket(packet); }
+            if (!packet.isEmpty() && !packet.startsWith("OK")) { handlePacket(packet); }
+        }
+    }
+
+    public void sendAll(String s) {
+        if (hosting.get()) {
+            server.sendAll(s);
         }
     }
 
@@ -100,9 +137,16 @@ public class JGNetworkManager {
 
     private void handlePacket(String packet) {
 
-        System.out.println("Got Packet: " + packet);
+        packetStream.set(packet);
 
-//        if (packet.contains(":") && !packet.startsWith(nick)) {
+        System.out.println("PACKET!: " + packet);
+
+//            System.out.println("Got Packet: " + packet);
+//
+//
+
+
+//        if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
 //            System.out.println(packet);
 //            // if (packet.contains(":")) {
 //            // System.out.println(packet);
@@ -112,7 +156,7 @@ public class JGNetworkManager {
 //            String posY = splitter[3];
 //            String uuid = splitter[4];
 //
-//            if (uuid.equals(nick)) {
+//            if (uuid.equals(self.nick.get())) {
 //                type = "player";
 //            }
 //

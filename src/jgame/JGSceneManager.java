@@ -2,6 +2,7 @@ package jgame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -68,6 +69,13 @@ public class JGSceneManager {
 //			Label label = new Label("label");
 //			b.stackPane.get().getChildren().add(label);
 //		}
+	}
+
+	public void changeSceneByName(String n) {
+		if (!activeScene.get().name.get().equals(n)) {
+			JGScene scene = this.sceneList.stream().filter(p -> p.name.get().equals(n)).collect(Collectors.toList()).get(0);
+			changeScenes(scene);
+		}
 	}
 	
 //	class ActiveScene implements FieldListener<Scene> {
