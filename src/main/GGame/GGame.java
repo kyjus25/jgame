@@ -15,7 +15,7 @@ import jgame.JGame;
 public class GGame extends JGame {
 	public GGame(Stage stage) {
 		super(60, "Another", stage, 800, 600);
-		
+
 //		keyboardManager.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {
 //			System.out.println("here");
 //			if (event == KeyCode.NUMPAD1) {

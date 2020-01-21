@@ -9,7 +9,9 @@ public class FieldList<T> extends ArrayList<T> {
 	
 	public boolean add(T value) {
 		boolean response = super.add(value);
-		listeners.forEach((n) -> n.changed(this, value));
+		List<ListListener<T>> copy = new ArrayList<ListListener<T>>();
+    	copy.addAll(listeners);
+    	copy.forEach((n) -> n.changed(this, value));
 		return response;
 	}
 

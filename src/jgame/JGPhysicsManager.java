@@ -13,23 +13,29 @@ import jgame.generics.FieldEvent;
 import jgame.generics.FieldList;
 import jgame.generics.FieldListener;
 import jgame.generics.KeyStateEvent;
+import jgame.generics.PhysicsEvent;
 import main.GGame.GGame;
 
 public class JGPhysicsManager {
+    private static List<PhysicsEvent> listeners = new ArrayList<PhysicsEvent>();
+    private static List<JGPhysics> physicslisteners = new ArrayList<JGPhysics>();
+
 	//  Class used to help manager movement of sprites
 	public FieldList<JGPhysics> physicsList = new FieldList<>();
 //	private static HashMap<JGPhysics, List<FieldListener<JGSprite>>> physicsList = new HashMap<>();
 	public JGPhysicsManager() {
 		JGame.tick.addEventHandler((tick) -> {
+//			System.out.println("LISTENERS " + listeners.size());
 			physicsList.stream().filter(i -> i.active.get().equals(true)).collect(Collectors.toList()).forEach(physics -> {
-				JGame.spriteManager.spriteList.stream().filter(i -> i.active.get().equals(true) && i.canMove.get().equals(true))
+				JGame.spriteManager.activeSprites.stream().filter(i -> i.active.get().equals(true) && i.canMove.get().equals(true))
 				.collect(Collectors.toList()).forEach(sprite -> {
-					sprite.onPhysics(sprite, physics);
-//					physics.onPhysics(sprite, physics);
+					listeners.forEach((item) -> {
+						item.changed(physics, sprite);
+					});
+					sprite.onPhysics(physics);
 				});
 			});
 			
-
 //			for (JGPhysics physics : physicsList.keySet()) {
 //				if (physics.active.get() == true) {
 //					physicsList.get(physics).forEach(i -> {
@@ -60,4 +66,13 @@ public class JGPhysicsManager {
 //		List<FieldListener<JGSprite>> list = new ArrayList<FieldListener<JGSprite>>();
 //		physicsList.put(physics, list);		 
 //	}
+	
+	public static void addEventHandler(PhysicsEvent toAdd) {
+		listeners.add(toAdd);
+	}
+	
+	public void reset() {
+		physicsList.clear();
+		listeners.clear();
+	}
 }

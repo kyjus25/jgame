@@ -23,6 +23,7 @@ public class JGame extends CommonControls {
 	
 	public static JGSceneManager sceneManager;
 	public static JGKeyboardManager keyboardManager;
+	public static JGMouseManager mouseManager;
 	public static JGSpriteManager spriteManager;
 	public static JGMenuBar menuBar;
 	public static JGPhysicsManager physicsManager;
@@ -39,15 +40,25 @@ public class JGame extends CommonControls {
 		sceneManager = new JGSceneManager();
 		spriteManager = new JGSpriteManager();
 		keyboardManager = new JGKeyboardManager();
+		mouseManager = new JGMouseManager();
 		menuBar = new JGMenuBar();
-		sceneManager.changeScenes(new JGScene("Default"));
 		physicsManager = new JGPhysicsManager();
+		sceneManager.changeScenes(new JGScene("Default"));
+		
 
 		JGame.stage.get().show();
 		initialize();
 		run();
 	}
-	
+//	
+//	public static void reset() {
+//		JGScene scene = sceneManager.activeScene.get();
+//		sceneManager = new JGSceneManager();
+//		spriteManager = new JGSpriteManager();
+//		keyboardManager = new JGKeyboardManager();
+////		sceneManager.changeScenes(scene);
+//		physicsManager = new JGPhysicsManager();
+//	}
     private void run() {
     	final Duration oneFrameAmt = Duration.millis(1000/fps.get());
     	final KeyFrame oneFrame = new KeyFrame(oneFrameAmt,

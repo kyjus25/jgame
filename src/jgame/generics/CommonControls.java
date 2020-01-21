@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import jgame.*;
 
 public class CommonControls {
@@ -13,6 +14,9 @@ public class CommonControls {
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_PRESSED, (KeyCode k) -> this.onKeyPress(k));
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_RELEASED, (KeyCode k) -> this.onKeyReleased(k));
 		JGKeyboardManager.addEventHandler((KeyCode k, boolean b) -> this.onKeyEvent(k, b));
+		JGPhysicsManager.addEventHandler((JGPhysics p, JGSprite s) -> onPhysics(p, s));
+		JGSceneManager.activeScene.addEventHandler((JGScene scene) -> onScene(scene));
+		JGMouseManager.addEventHandler((MouseEvent me, boolean b) -> onMouseEvent(me, b));
 //		JGKeyboardManager.addEventHandler((KeyCodeCombination k, boolean b) -> this.onKeyEvent(k, b));
 //		JGKeyboardManager.addEventHandler((KeyCodeCombination keyCode) -> this.onKeyCombination(combination));
 	}
@@ -30,11 +34,12 @@ public class CommonControls {
 	public void onGameLoop(ActionEvent event) {}
 	
 	//	JGMoustManager Callback
+	public void onMouseEvent(MouseEvent mouseEvent, boolean isPressed) {}
 	//	ToDo: Create Mouse Manager
 	
-	public void onCollision(JGSprite a, JGSprite b) {}
-
-	public void onCollision(JGSprite b) {}
-	
-	public void onPhysics(JGSprite sprite, JGPhysics physics) {}
+	public void onCollision(JGSprite spriteA, JGSprite spriteB) {}
+	public void onCollision(JGSprite sprite) {}
+	public void onPhysics(JGPhysics physics, JGSprite sprite) {}
+	public void onPhysics(JGPhysics physics) {}
+	public void onScene(JGScene scene) {}
 }

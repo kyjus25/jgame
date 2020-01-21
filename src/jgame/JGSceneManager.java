@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -14,10 +15,13 @@ import jgame.generics.*;
 
 public class JGSceneManager {
 	public FieldReadOnly<VBox> vbox = new FieldReadOnly<>(new VBox());
-	public FieldEvent<Scene> scene = new FieldEvent<Scene>(new Scene(vbox.get(), JGame.width.get(), JGame.height.get()));
+	BorderPane borderPane = new BorderPane();
+	public FieldEvent<Scene> scene = new FieldEvent<Scene>(new Scene(borderPane, JGame.width.get(), JGame.height.get()));
 //	public FieldReadOnly<Scene> scene = new FieldReadOnly<>(new Scene(vbox, JGame.width.get(), JGame.height.get()));
-	public FieldEvent<JGScene> activeScene = new FieldEvent<>();
+	public static FieldEvent<JGScene> activeScene = new FieldEvent<>();
 	FieldList<JGScene> sceneList = new FieldList<>();
+//    private static List<JGScene> listeners = new ArrayList<JGScene>();
+
 	
 //	 private final static List<JGScene> GAME_GROUPS= new ArrayList<JGScene>();
 	Label debugLabel;
@@ -46,28 +50,28 @@ public class JGSceneManager {
 	}
 	
 	public void changeScenes(JGScene jgscene) {
-//		VBox vbox = new VBox();
-//		vbox.getChildren().clear();
-//		vbox.getChildren().add(JGame.menuBar.menuBar);
-//		vbox.getChildren().add(b.stackPane.get());
-		vbox.get().getChildren().clear();
-		vbox.get().getChildren().add(JGame.menuBar.get());
-		vbox.get().getChildren().add(new Group(jgscene.stackPane.get()));
-//		jgscene.stackPane.get()
 		
-//		Group g = new Group(jgscene.stackPane.get());
-//		g.setAutoSizeChildren(false);
-//		vbox.get().getChildren().add(g);
-//		vbox.get().getChildren().add( new Rectangle(-750, -750, 1500, 1500));
-//		this.activeScene.set(b);
+//		vbox.get().getChildren().clear();
+//		jgscene.reset();
+//		vbox.get().getChildren().add(JGame.menuBar.get());
+//		vbox.get().getChildren().add(new Group(jgscene.stackPane.get()));
+//		jgscene.stackPane.get().getChildren().add(new BorderPane());
+
+//		JGame.stage.get().setScene(scene.get());
+//		jgscene.initialize();
+//		this.activeScene.set(jgscene);
+	     
+	     borderPane.setTop(JGame.menuBar.get());
+	     borderPane.setCenter(jgscene.stackPane.get());
+//	     borderPane.setBottom(statusbar);
+	     
+	    jgscene.reset();
+	    jgscene.initialize();
+//		jgscene.stackPane.get().getChildren();
 		JGame.stage.get().setScene(scene.get());
 		this.activeScene.set(jgscene);
-		jgscene.initialize();
-//		this.activeScene.set(JGame.stage.get().getScene());
-//		if (debugLabel != null) {
-//			Label label = new Label("label");
-//			b.stackPane.get().getChildren().add(label);
-//		}
+		
+
 	}
 	
 //	class ActiveScene implements FieldListener<Scene> {
@@ -75,6 +79,10 @@ public class JGSceneManager {
 //		public void changed(Scene obj) {
 //			System.out.println("changed");
 //		}
+//	}
+	
+//	public static void addEventHandler(FieldEvent<JGScene> toAdd) {
+//		listeners.add(toAdd);
 //	}
 }
 
