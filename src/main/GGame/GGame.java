@@ -62,6 +62,7 @@ public class GGame extends JGame {
 		
 		GLevel level1 = new GLevel();
 		JGScene level2 = new JGScene();
+		Pong level3 = new Pong();
 
 		level2.stackPane.get().getChildren().add(circle);
 		
