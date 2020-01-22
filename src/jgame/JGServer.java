@@ -58,6 +58,10 @@ public class JGServer implements Runnable  {
 
         JGCreateRequest player = lastKnownPos.get(nick);
 
+        lastKnownPos.forEach((list, i) -> {
+            sendQueue.add(i);
+        });
+
         if (player == null) {
             // TODO CHANGE THIS
             JGCreateRequest newPlayer = new JGCreateRequest("Host", "paddle", "EMPTY", "EMPTY", nick);

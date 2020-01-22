@@ -55,7 +55,6 @@ class PongLayer extends JGLayer {
             case "player":
                 sprite = new PongPlayer();
                 if (JGame.networkManager.getPlayerNumber() == 2) {
-                    System.out.println("setting posX to player 2");
                     sprite.positionX.set(800.0 - 40.0);
                 }
                 break;
