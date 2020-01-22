@@ -2,11 +2,14 @@ package jgame;
 
 import jgame.generics.Field;
 import jgame.generics.FieldList;
+import jgame.generics.ListListener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 class JGCreateRequest {
@@ -68,11 +71,15 @@ public class JGServer implements Runnable  {
 
     public void listenSendQueue() {
         sendQueue.addEventHandler((queue, i) -> {
-            lastKnownPos.put(i.uuid.get(), i);
-//            System.out.println("could send " + sendQueue.size() + ": " + sendQueue);
-//            System.out.println(i.type.get());
-            sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get());
-            queue.removeAll(queue);
+            if (queue.size() > 0) {
+                List<JGCreateRequest> copy = new ArrayList<>(queue);
+                queue.clear();
+                copy.forEach(item -> {
+                    lastKnownPos.put(i.uuid.get(), i);
+                    sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get());
+                });
+
+            }
         });
     }
 

@@ -27,7 +27,7 @@ public class JGNetworkManager extends CommonControls {
 
     public FieldList<JGUser> users = new FieldList<>();
 
-    public FieldEvent<String> packetStream = new FieldEvent<>();
+    public FieldList<String> packetStream = new FieldList<>();
     public HashMap<String, JGCreateRequest> lastKnownPos = new HashMap<>();
 
     public JGNetworkManager() {
@@ -86,7 +86,7 @@ public class JGNetworkManager extends CommonControls {
                 }
             }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
-            if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.set(packet); }
+            if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.add(packet); }
         }
     }
 
@@ -151,6 +151,7 @@ public class JGNetworkManager extends CommonControls {
 
                     if (!lastKnownPos.containsKey(uuid)) {
                         lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                        System.out.println("sending new " + type);
                         submit(type + " " + posX + " " + posY + " " + uuid);
                         // System.out.println("sent not contains: " + type + " " + posX + " " + posY + " " + uuid );
                     } else {
@@ -159,7 +160,10 @@ public class JGNetworkManager extends CommonControls {
 
                         if (!posX.equals(oldPosX) || !posY.equals(oldPosY)) {
                             lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+
+                            System.out.println("sending " + type);
                             submit(type + " " + posX + " " + posY + " " + uuid);
+
                             // System.out.println("sent contains: " + type + " " + posX + " " + posY + " " + uuid );
                         }
                     }
@@ -170,50 +174,51 @@ public class JGNetworkManager extends CommonControls {
 
         // HANDLE INCOMING TRAFFIC
 
-        String packet = packetStream.get();
+        if (packetStream.size() > 0) {
+            List<String> packets = new ArrayList<>(packetStream);
+            packetStream.clear();
+            packets.forEach(packet -> {
+                if (packet.startsWith("SCENE") && !hosting.get()) {
+                    String sceneName = packet.split("[ ]")[1];
+                    JGame.sceneManager.changeSceneByName(sceneName);
+                }
 
-        if (packet.startsWith("SCENE") && !hosting.get()) {
-            String sceneName = packet.split("[ ]")[1];
-            JGame.sceneManager.changeSceneByName(sceneName);
+                if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
+
+                    // System.out.println("Heyyyy packet" + packet);
+
+                    // if (packet.contains(":")) {
+                    // System.out.println(packet);
+                    String[] splitter = packet.split(" ");
+                    String type = splitter[1];
+                    String posX = splitter[2];
+                    String posY = splitter[3];
+                    String uuid = splitter[4];
+
+                    if (uuid.equals(self.nick.get())) {
+                        type = "player";
+                    }
+
+                    JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
+                    if (sprite != null) {
+                        // Update it
+                        sprite.positionX.set(Double.parseDouble(posX));
+                        sprite.positionY.set(Double.parseDouble(posY));
+                    } else {
+                        // Create it
+                        // System.out.println("CREATING");
+                        JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
+                        JGSprite newSprite = layer.create(type);
+                        newSprite.uuid.set(uuid);
+                        newSprite.positionX.set(Double.parseDouble(posX));
+                        newSprite.positionY.set(Double.parseDouble(posY));
+                        layer.addToLayer(newSprite, true);
+                        JGame.spriteManager.spriteList.add(newSprite);
+                        JGame.spriteManager.activeSprites.add(newSprite);
+                    }
+                }
+            });
         }
-
-        if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
-
-            if (packet.contains("paddle")) {
-                System.out.println("Heyyyy packet" + packet);
-            }
-
-            // if (packet.contains(":")) {
-            // System.out.println(packet);
-            String[] splitter = packet.split(" ");
-            String type = splitter[1];
-            String posX = splitter[2];
-            String posY = splitter[3];
-            String uuid = splitter[4];
-
-            if (uuid.equals(self.nick.get())) {
-                type = "player";
-            }
-
-            JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
-            if (sprite != null) {
-                // Update it
-                sprite.positionX.set(Double.parseDouble(posX));
-                sprite.positionY.set(Double.parseDouble(posY));
-            } else {
-                // Create it
-                System.out.println("CREATING");
-                JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
-                JGSprite newSprite = layer.create(type);
-                newSprite.uuid.set(uuid);
-                newSprite.positionX.set(Double.parseDouble(posX));
-                newSprite.positionY.set(Double.parseDouble(posY));
-                layer.addToLayer(newSprite, true);
-                JGame.spriteManager.spriteList.add(newSprite);
-                JGame.spriteManager.activeSprites.add(newSprite);
-            }
-        }
-
     }
 
     private void initializeHeartBeat() {
