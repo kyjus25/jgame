@@ -22,8 +22,8 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Grant");
-    public Field<Boolean> hosting = new Field<>(false);
+    public JGUser self = new JGUser("Justin");
+    public Field<Boolean> hosting = new Field<>(true);
 
     public FieldList<JGUser> users = new FieldList<>();
 
@@ -137,7 +137,8 @@ public class JGNetworkManager extends CommonControls {
         // HANDLE OUTGOING TRAFFIC
         JGame.spriteManager.activeSprites.forEach(sprite -> {
             String type = sprite.type.get();
-            if (hosting.get() || type.equals("player")) {
+            // TODO CHANGE THIS
+            if ((hosting.get() && !type.equals("paddle")) || type.equals("player")) {
 
 
                 if (sprite.type.get().equals("player")) {
