@@ -44,16 +44,40 @@ public class JGServer implements Runnable  {
 
     public void disconnectUser(JGUser u) {
         users.remove(u);
-        sendList();
+        sendUserList();
     }
 
-    public void sendList() {
+    public void sendUserList() {
         System.out.println("Getting users");
         String nicks = users.stream().map(u -> u.nick.get()).collect(Collectors.joining(" "));
         System.out.println("nicks: " + nicks);
         sendAll("LISTUSERS " + nicks);
     }
 
+    public void sendLastKnownPositions(String nick) {
+
+        JGCreateRequest player = lastKnownPos.get(nick);
+
+        if (player == null) {
+            // TODO CHANGE THIS
+            JGCreateRequest newPlayer = new JGCreateRequest("Host", "paddle", "EMPTY", "EMPTY", nick);
+            sendQueue.add(newPlayer);
+        }
+
+        // System.out.println(player);
+//        lastKnownPos.forEach((list, i) -> {
+//
+//        });
+//        sendQueue.add()
+    }
+
+    public void sendAll(String s, String sender) {
+        users.forEach(u -> {
+            if (!u.nick.get().equals(sender)) {
+                u.submit(s);
+            }
+        });
+    }
     public void sendAll(String s) {
         users.forEach(u -> {
             u.submit(s);
@@ -76,7 +100,7 @@ public class JGServer implements Runnable  {
                 queue.clear();
                 copy.forEach(item -> {
                     lastKnownPos.put(i.uuid.get(), i);
-                    sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get());
+                    sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get(), i.sender.get());
                 });
 
             }

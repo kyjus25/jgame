@@ -46,9 +46,7 @@ class PongLayer extends JGLayer {
         rectangle.setFill(Color.BLACK);
         pane.get().getChildren().add(rectangle);
 
-        addToLayer(create("player"));
         addToLayer(create("ball"));
-        addToLayer(create("paddle"));
     }
 
     public JGSprite create(String type) {
@@ -56,12 +54,19 @@ class PongLayer extends JGLayer {
         switch (type) {
             case "player":
                 sprite = new PongPlayer();
+                if (JGame.networkManager.getPlayerNumber() == 2) {
+                    System.out.println("setting posX to player 2");
+                    sprite.positionX.set(800.0 - 40.0);
+                }
                 break;
             case "ball":
                 sprite = new PongBall();
                 break;
             case "paddle":
                 sprite = new PongPaddle();
+                if (JGame.networkManager.getPlayerNumber() == 2) {
+                    sprite.positionX.set(40.0);
+                }
                 break;
         }
         return sprite;
@@ -106,16 +111,6 @@ class PongPaddle extends JGSprite {
         node.set(rectangle);
         positionX.set(800.0 - 40);
         positionY.set(400.0 - 100.0);
-    }
-
-    public void onGameLoop(ActionEvent e) {
-//        if (node != null && ball != null) {
-//            if (ball.positionY.get() > positionY.get()) {
-//                velocityY.set(speed);
-//            } else {
-//                velocityY.set(-speed);
-//            }
-//        }
     }
 }
 

@@ -22,7 +22,7 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Guy2");
+    public JGUser self = new JGUser("Grant");
     public Field<Boolean> hosting = new Field<>(false);
 
     public FieldList<JGUser> users = new FieldList<>();
@@ -135,41 +135,32 @@ public class JGNetworkManager extends CommonControls {
     public void onGameLoop(ActionEvent e) {
 
         // HANDLE OUTGOING TRAFFIC
-        if (hosting.get()) {
-            JGame.spriteManager.activeSprites.forEach(sprite -> {
+        JGame.spriteManager.activeSprites.forEach(sprite -> {
+            String type = sprite.type.get();
+            if (hosting.get() || type.equals("player")) {
 
-                    String type = sprite.type.get();
 
-                    if (sprite.type.get().equals("player")) {
-                        // TODO CHANGE THIS
-                        type = "paddle";
-                    }
-
-                    String posX = sprite.positionX.get().toString();
-                    String posY = sprite.positionY.get().toString();
-                    String uuid = sprite.uuid.get();
-
-                    if (!lastKnownPos.containsKey(uuid)) {
+                if (sprite.type.get().equals("player")) {
+                    // TODO CHANGE THIS
+                    type = "paddle";
+                }
+                String posX = sprite.positionX.get().toString();
+                String posY = sprite.positionY.get().toString();
+                String uuid = sprite.uuid.get();
+                if (!lastKnownPos.containsKey(uuid)) {
+                    lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                    submit(type + " " + posX + " " + posY + " " + uuid);
+                } else {
+                    String oldPosX = lastKnownPos.get(sprite.uuid.get()).posX.get();
+                    String oldPosY = lastKnownPos.get(sprite.uuid.get()).posY.get();
+                    if (!posX.equals(oldPosX) || !posY.equals(oldPosY)) {
                         lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
-                        System.out.println("sending new " + type);
                         submit(type + " " + posX + " " + posY + " " + uuid);
-                        // System.out.println("sent not contains: " + type + " " + posX + " " + posY + " " + uuid );
-                    } else {
-                        String oldPosX = lastKnownPos.get(sprite.uuid.get()).posX.get();
-                        String oldPosY = lastKnownPos.get(sprite.uuid.get()).posY.get();
-
-                        if (!posX.equals(oldPosX) || !posY.equals(oldPosY)) {
-                            lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
-
-                            System.out.println("sending " + type);
-                            submit(type + " " + posX + " " + posY + " " + uuid);
-
-                            // System.out.println("sent contains: " + type + " " + posX + " " + posY + " " + uuid );
-                        }
                     }
+                }
+            }
+        });
 
-            });
-        }
 
 
         // HANDLE INCOMING TRAFFIC
@@ -184,8 +175,6 @@ public class JGNetworkManager extends CommonControls {
                 }
 
                 if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
-
-                    // System.out.println("Heyyyy packet" + packet);
 
                     // if (packet.contains(":")) {
                     // System.out.println(packet);
@@ -206,15 +195,13 @@ public class JGNetworkManager extends CommonControls {
                         sprite.positionY.set(Double.parseDouble(posY));
                     } else {
                         // Create it
-                        // System.out.println("CREATING");
                         JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
                         JGSprite newSprite = layer.create(type);
                         newSprite.uuid.set(uuid);
-                        newSprite.positionX.set(Double.parseDouble(posX));
-                        newSprite.positionY.set(Double.parseDouble(posY));
+                        if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
+                        if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
                         layer.addToLayer(newSprite, true);
-                        JGame.spriteManager.spriteList.add(newSprite);
-                        JGame.spriteManager.activeSprites.add(newSprite);
+                        if (!hosting.get()) { newSprite.addSpriteToManager(true); }
                     }
                 }
             });

@@ -34,10 +34,7 @@ public class JGSprite extends CommonControls {
 //			}
 //		});
 
-		if (JGame.networkManager.hosting.get()) {
-			JGame.spriteManager.spriteList.add(this);
-			JGame.spriteManager.activeSprites.add(this);
-		}
+		addSpriteToManager();
 
 //		System.out.println(JGame.spriteManager.spriteList);
 		
@@ -57,6 +54,20 @@ public class JGSprite extends CommonControls {
 	public void setVelocity(double x, double y) {
 		velocityX.set(x);
 		velocityY.set(y);
+	}
+
+	public void addSpriteToManager() {
+		if (JGame.networkManager.hosting.get()) {
+			JGame.spriteManager.spriteList.add(this);
+			JGame.spriteManager.activeSprites.add(this);
+		}
+	}
+
+	public void addSpriteToManager(boolean force) {
+		if (force) {
+			JGame.spriteManager.spriteList.add(this);
+			JGame.spriteManager.activeSprites.add(this);
+		}
 	}
 	
 	public void addToScene() {
