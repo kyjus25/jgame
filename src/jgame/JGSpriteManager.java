@@ -18,7 +18,6 @@ public class JGSpriteManager {
 			activeSprites.clear();
 			spriteList.forEach(sprite -> {
 				if (sprite.node.get().getScene() != null) {
-					System.out.println("sprite " + sprite);
 					sprite.initialize();
 					activeSprites.add(sprite);
 				} else {
@@ -28,9 +27,9 @@ public class JGSpriteManager {
 				}
 			});
 			
-			System.out.println("layers" +scene.layers);
-			System.out.println("activeSprites" + activeSprites);
-			System.out.println("spriteList" + spriteList);
+			// System.out.println("layers" +scene.layers);
+			// System.out.println("activeSprites" + activeSprites);
+			// System.out.println("spriteList" + spriteList);
 		});
 		JGame.tick.addEventHandler((event) -> {
 			cleanup();
@@ -39,6 +38,15 @@ public class JGSpriteManager {
 				sprite.update();
 			});
 		});
+	}
+
+	public JGSprite getSpriteByUUID(String uuid) {
+		List<JGSprite> array = activeSprites.stream().filter(p -> p.uuid.get().equals(uuid)).collect(Collectors.toList());
+		if (array.size() > 0) {
+			return array.get(0);
+		} else {
+			return null;
+		}
 	}
 	
     public void checkCollisions() {
@@ -74,13 +82,5 @@ public class JGSpriteManager {
 //    			activeSprites.add(sprite);
 //    		}
 //    	});
-    }
-    
-    public List<JGSprite> getSprites(Boolean active) {
-    	if (active) {
-//    		JGame.sceneManager.activeScene.get().stackPane.get().getChildren().contains(sprite.node.get().getParent())
-    		return spriteList.stream().filter(p -> p.node.get().getScene() == JGame.sceneManager.activeScene.get().scene.get()).collect(Collectors.toList());
-    	}
-    	return spriteList.stream().filter(p -> p.node.get().getScene() != JGame.sceneManager.activeScene.get().scene.get()).collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import jgame.generics.*;
+import java.util.UUID;
 
 public class JGSprite extends CommonControls {
 	public FieldEvent<Double> positionX = new FieldEvent<>(0.0);
@@ -16,6 +17,9 @@ public class JGSprite extends CommonControls {
 	public FieldEvent<Boolean> active = new FieldEvent<>(false);
 	public Field<Boolean> canMove = new Field<>(false);
 	public Field<Node> node = new Field<>(new ImageView());
+	public Field<String> uuid = new Field<>(UUID.randomUUID().toString());
+	public Field<String> type = new Field<>("unset");
+
 
 	public JGSprite() {
 //		JGame.tick.addEventHandler((event) -> {
@@ -29,8 +33,12 @@ public class JGSprite extends CommonControls {
 //				}
 //			}
 //		});
-		JGame.spriteManager.spriteList.add(this);
-		JGame.spriteManager.activeSprites.add(this);
+
+		if (JGame.networkManager.hosting.get()) {
+			JGame.spriteManager.spriteList.add(this);
+			JGame.spriteManager.activeSprites.add(this);
+		}
+
 //		System.out.println(JGame.spriteManager.spriteList);
 		
 		positionX.addEventHandler((x) -> {

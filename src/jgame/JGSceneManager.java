@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.sun.javafx.perf.PerformanceTracker;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -51,6 +52,9 @@ public class JGSceneManager {
 	}
 	
 	public void changeScenes(JGScene jgscene) {
+
+		if (JGame.tracker != null) { JGame.tracker.resetAverageFPS(); }
+
 		
 //		vbox.get().getChildren().clear();
 //		jgscene.reset();
@@ -71,7 +75,9 @@ public class JGSceneManager {
 //		jgscene.stackPane.get().getChildren();
 		JGame.stage.get().setScene(scene.get());
 		this.activeScene.set(jgscene);
-		
+
+		JGame.tracker = PerformanceTracker.getSceneTracker(scene.get());
+		JGame.stage.get().setTitle(jgscene.name.get());
 
 	}
 

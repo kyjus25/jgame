@@ -5,10 +5,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import jgame.JGLayer;
-import jgame.JGPhysics;
-import jgame.JGScene;
-import jgame.JGSprite;
+import jgame.*;
 
 import java.util.Random;
 
@@ -49,11 +46,25 @@ class PongLayer extends JGLayer {
         rectangle.setFill(Color.BLACK);
         pane.get().getChildren().add(rectangle);
 
-        PongBall ball = new PongBall();
+        addToLayer(create("player"));
+        addToLayer(create("ball"));
+        addToLayer(create("paddle"));
+    }
 
-        addToLayer(new PongPlayer());
-        addToLayer(ball);
-        addToLayer(new PongPaddle(ball));
+    public JGSprite create(String type) {
+        JGSprite sprite = new JGSprite();
+        switch (type) {
+            case "player":
+                sprite = new PongPlayer();
+                break;
+            case "ball":
+                sprite = new PongBall();
+                break;
+            case "paddle":
+                sprite = new PongPaddle();
+                break;
+        }
+        return sprite;
     }
 }
 
@@ -63,6 +74,8 @@ class PongPlayer extends JGSprite {
     public PongPlayer() {
         Rectangle rectangle = new Rectangle(0, 0, 20, 100);
 
+        uuid.set(JGame.networkManager.self.nick.get());
+        type.set("player");
         canMove.set(true);
         active.set(false);
         rectangle.setFill(Color.WHITE);
@@ -82,12 +95,11 @@ class PongPlayer extends JGSprite {
 
 class PongPaddle extends JGSprite {
     public double speed = 5.0;
-    public PongBall ball;
 
-    public PongPaddle(PongBall ball) {
+    public PongPaddle() {
         Rectangle rectangle = new Rectangle(0, 0, 20, 100);
-        this.ball = ball;
 
+        type.set("paddle");
         canMove.set(true);
         active.set(false);
         rectangle.setFill(Color.WHITE);
@@ -97,11 +109,13 @@ class PongPaddle extends JGSprite {
     }
 
     public void onGameLoop(ActionEvent e) {
-        if (ball.positionY.get() > positionY.get()) {
-            velocityY.set(speed);
-        } else {
-            velocityY.set(-speed);
-        }
+//        if (node != null && ball != null) {
+//            if (ball.positionY.get() > positionY.get()) {
+//                velocityY.set(speed);
+//            } else {
+//                velocityY.set(-speed);
+//            }
+//        }
     }
 }
 
@@ -111,6 +125,7 @@ class PongBall extends JGSprite {
     public PongBall() {
         Rectangle rectangle = new Rectangle(0, 0, 20, 20);
 
+        type.set("ball");
         canMove.set(true);
         active.set(false);
         rectangle.setFill(Color.WHITE);
@@ -125,6 +140,12 @@ class PongBall extends JGSprite {
     public void onGameLoop(ActionEvent e) {
         if (node != null) {
             collidesWall();
+        }
+    }
+
+    public void onKeyPress(KeyCode key) {
+        if (key == KeyCode.P) {
+
         }
     }
 

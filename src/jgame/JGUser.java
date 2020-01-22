@@ -4,8 +4,10 @@ import jgame.generics.Field;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class JGUser implements Runnable {
     public Field<String> nick = new Field<>("Justin");
@@ -45,8 +47,14 @@ public class JGUser implements Runnable {
             }
             if (packet != null && !packet.isEmpty() && !packet.startsWith("BEAT") && !packet.startsWith("EXIT")) {
                 try {
-                    System.out.println("Server got a packet: " + nick.get() + ": " + packet);
-                    server.sendAll(nick.get() + ": " + packet);
+                    JGCreateRequest request = server.getJGCreateRequest(nick.get(), packet);
+
+                    List<JGCreateRequest> array = server.sendQueue.stream().filter(p -> p.uuid.get().equals(request.uuid.get())).collect(Collectors.toList());
+                    if (array.size() > 0) {
+                        server.sendQueue.remove(array.get(0));
+                    }
+
+                    server.sendQueue.add(request);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

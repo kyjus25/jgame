@@ -13,8 +13,18 @@ public class JGLayer extends CommonControls {
 	}
 	
 	public void addToLayer(JGSprite sprite) {
-		pane.get().getChildren().add(sprite.node.get());
+		if (JGame.networkManager.hosting.get()) {
+			pane.get().getChildren().add(sprite.node.get());
+		}
 	}
+
+	public void addToLayer(JGSprite sprite, boolean force) {
+		if (force) {
+			pane.get().getChildren().add(sprite.node.get());
+		}
+	}
+
+	public JGSprite create(String type) { return null; }
 	
 	public void removeFromLayer(Node node) {
 		pane.get().getChildren().remove(node);

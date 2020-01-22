@@ -10,7 +10,11 @@ import jgame.*;
 public class CommonControls {
 	//	On Initialize Function to call
 	public CommonControls() {
-		JGame.tick.addEventHandler((event) -> this.onGameLoop(event));
+		JGame.tick.addEventHandler((event) -> {
+			if (JGame.networkManager.hosting.get()) {
+				this.onGameLoop(event);
+			}
+		});
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_PRESSED, (KeyCode k) -> this.onKeyPress(k));
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_RELEASED, (KeyCode k) -> this.onKeyReleased(k));
 		JGKeyboardManager.addEventHandler((KeyCode k, boolean b) -> this.onKeyEvent(k, b));

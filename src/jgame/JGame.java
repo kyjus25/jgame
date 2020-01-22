@@ -5,8 +5,8 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import com.sun.javafx.perf.PerformanceTracker;
+
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jgame.generics.*;
@@ -21,6 +21,7 @@ public class JGame extends CommonControls {
 	protected static FieldEvent<Boolean> debug = new FieldEvent<>(true);
 	protected static Field<Timeline> gameLoop = new Field<>();
 	public static FieldEvent<ActionEvent> tick = new FieldEvent<>();
+	public static PerformanceTracker tracker;
 	
 	public static JGSceneManager sceneManager;
 	public static JGKeyboardManager keyboardManager;
@@ -42,10 +43,10 @@ public class JGame extends CommonControls {
 		spriteManager = new JGSpriteManager();
 		keyboardManager = new JGKeyboardManager();
 		mouseManager = new JGMouseManager();
+		networkManager = new JGNetworkManager();
 		menuBar = new JGMenuBar();
 		physicsManager = new JGPhysicsManager();
 		sceneManager.changeScenes(new JGScene("Default"));
-		networkManager = new JGNetworkManager();
 
 		JGame.stage.get().show();
 		initialize();
@@ -71,6 +72,10 @@ public class JGame extends CommonControls {
 			@Override
 			public void handle(ActionEvent event) {
 				tick.set(event);
+				if (!networkManager.hosting.get()) {
+					networkManager.onGameLoop(event);
+				}
+
 //				if (debug.get()) {
 //					debugLabel.setText(
 //							String.format("Averate FPS: %.3f \n", tracker.getAverageFPS()) +
