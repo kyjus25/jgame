@@ -30,21 +30,32 @@ public class JGNetworkManager extends CommonControls {
     public FieldList<String> packetStream = new FieldList<>();
     public HashMap<String, JGCreateRequest> lastKnownPos = new HashMap<>();
 
+    private JGScene activeScene;
+
+    public Field<String> playerSprite = new Field<>();
+    public Field<String> networkSprite = new Field<>();
+
     public JGNetworkManager() {
 
+        JGame.sceneManager.activeScene.addEventHandler(scene -> {
+            activeScene = scene;
+            playerSprite.set(activeScene.playerSprite.get());
+            networkSprite.set(activeScene.networkSprite.get());
+            if (hosting.get()) {
+                sendAll("SCENE " + scene.name.get());
+            }
+        });
+
         if (hosting.get()) {
+
             server = new JGServer();
             new Thread(server).start();
-
-            JGame.sceneManager.activeScene.addEventHandler(scene -> {
-                sendAll("SCENE " + scene.name.get());
-            });
 
         } else {
 
             JGame.spriteManager.activeSprites.addEventHandler((sprites, i) -> {
                 sprites.forEach(sprite -> {
-                    if (!sprite.type.get().equals("player")) {
+                    if (!sprite.type.get().equals(playerSprite.get())) {
                         sprite.velocityY.set(0.0);
                         sprite.velocityX.set(0.0);
                     }
@@ -137,13 +148,11 @@ public class JGNetworkManager extends CommonControls {
         // HANDLE OUTGOING TRAFFIC
         JGame.spriteManager.activeSprites.forEach(sprite -> {
             String type = sprite.type.get();
-            // TODO CHANGE THIS
-            if ((hosting.get() && !type.equals("paddle")) || type.equals("player")) {
+            if ((hosting.get() && !type.equals(networkSprite.get())) || type.equals(playerSprite.get())) {
 
 
-                if (sprite.type.get().equals("player")) {
-                    // TODO CHANGE THIS
-                    type = "paddle";
+                if (sprite.type.get().equals(playerSprite.get())) {
+                    type = networkSprite.get();
                 }
                 String posX = sprite.positionX.get().toString();
                 String posY = sprite.positionY.get().toString();
@@ -186,7 +195,7 @@ public class JGNetworkManager extends CommonControls {
                     String uuid = splitter[4];
 
                     if (uuid.equals(self.nick.get())) {
-                        type = "player";
+                        type = playerSprite.get();
                     }
 
                     JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);

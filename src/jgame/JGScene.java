@@ -32,6 +32,9 @@ public class JGScene extends CommonControls {
 	public Field<StackPane> stackPane = new Field<>(new StackPane());
 	protected Field<Scene> scene = new Field<>(new Scene(this.stackPane.get(), JGame.width.get(), JGame.height.get()));
 	public Field<String> name = new Field<>("Default");
+
+	public Field<String> playerSprite = new Field<>("player");
+	public Field<String> networkSprite = new Field<>();
 	
 	public void reset() {
 		stackPane.get().setTranslateX(0);

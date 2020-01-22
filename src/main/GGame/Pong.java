@@ -15,7 +15,10 @@ public class Pong extends JGScene {
     // PlayerLayer playerLayer;
     // Layer4 enemyLayer;
 
-    public Pong() {}
+    public Pong() {
+        playerSprite.set("player");
+        networkSprite.set("paddle");
+    }
 
     public void initialize() {
         System.out.println("Pong initialize");
@@ -51,6 +54,7 @@ class PongLayer extends JGLayer {
 
     public JGSprite create(String type) {
         JGSprite sprite = new JGSprite();
+        System.out.println("TYPE" + type);
         switch (type) {
             case "player":
                 sprite = new PongPlayer();

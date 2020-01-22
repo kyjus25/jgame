@@ -48,9 +48,7 @@ public class JGServer implements Runnable  {
     }
 
     public void sendUserList() {
-        System.out.println("Getting users");
         String nicks = users.stream().map(u -> u.nick.get()).collect(Collectors.joining(" "));
-        System.out.println("nicks: " + nicks);
         sendAll("LISTUSERS " + nicks);
     }
 
@@ -63,16 +61,9 @@ public class JGServer implements Runnable  {
         });
 
         if (player == null) {
-            // TODO CHANGE THIS
-            JGCreateRequest newPlayer = new JGCreateRequest("Host", "paddle", "EMPTY", "EMPTY", nick);
+            JGCreateRequest newPlayer = new JGCreateRequest("Host", JGame.networkManager.networkSprite.get(), "EMPTY", "EMPTY", nick);
             sendQueue.add(newPlayer);
         }
-
-        // System.out.println(player);
-//        lastKnownPos.forEach((list, i) -> {
-//
-//        });
-//        sendQueue.add()
     }
 
     public void sendAll(String s, String sender) {
