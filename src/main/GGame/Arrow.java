@@ -54,10 +54,10 @@ public class Arrow extends JGSprite {
 	public void onCollision(JGSprite sprite) {
 		if (sprite.type.get().equals("enemy")) {
 			JGame.networkManager.sendEvent("HEALTH", sprite.uuid.get());
-			JGame.spriteManager.deleteSprite(this);
+			JGame.networkManager.sendDelete(uuid.get());
 		}
 		if (sprite.type.get().equals("ground")) {
-			JGame.spriteManager.deleteSprite(this);
+			JGame.networkManager.sendDelete(uuid.get());
 		}
 	}
 	

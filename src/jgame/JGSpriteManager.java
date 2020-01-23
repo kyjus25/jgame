@@ -93,11 +93,11 @@ public class JGSpriteManager {
     	copy2.addAll(cleanupSprites);
     	copy2.forEach(sprite -> {
 			try {
-				sprite.active.set(false);
-				sprite.removeSpriteFromManager(true);
 				JGSceneManager.activeScene.get().layers.forEach(layer -> {
 					layer.removeFromLayer(sprite);
 				});
+				sprite.active.set(false);
+				sprite.removeSpriteFromManager(true);
 			} catch (Exception e) {}
 		});
     	cleanupSprites.clear();

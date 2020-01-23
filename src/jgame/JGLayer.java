@@ -31,6 +31,11 @@ public class JGLayer extends CommonControls {
 	}
 	
 	public void removeFromLayer(JGSprite sprite) {
-		pane.get().getChildren().remove(sprite.node.get());
+		if (sprite != null) {
+			try {
+				pane.get().getChildren().remove(sprite.node.get());
+			} catch(Exception e) { }
+		}
+
 	}
 }
