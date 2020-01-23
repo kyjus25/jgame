@@ -11,6 +11,7 @@ public class JGSpriteManager {
 //	FieldList<Integer> list = new FieldList<>();
 	public FieldList<JGSprite> spriteList = new FieldList<>();
 	public FieldList<JGSprite> activeSprites = new FieldList<>();
+	public FieldList<JGSprite> cleanupSprites = new FieldList<>();
 //    private static List<KeyStateEvent> collisionListener = new ArrayList<KeyStateEvent>();
 
 	public JGSpriteManager() {
@@ -73,13 +74,7 @@ public class JGSpriteManager {
     }
 
     public void deleteSprite(JGSprite sprite) {
-		try {
-			sprite.active.set(false);
-			sprite.removeSpriteFromManager(true);
-			JGSceneManager.activeScene.get().layers.forEach(layer -> {
-			layer.removeFromLayer(sprite);
-			});
-		} catch (Exception e) {}
+		cleanupSprites.add(sprite);
 	}
 
     public void cleanup() {
@@ -93,10 +88,19 @@ public class JGSpriteManager {
     			activeSprites.remove(sprite);
     		}
     	});
-//    	spriteList.forEach(sprite -> {
-//    		if (!activeSprites.contains(sprite)) {
-//    			activeSprites.add(sprite);
-//    		}
-//    	});
+
+    	List<JGSprite> copy2 = new ArrayList<>();
+    	copy2.addAll(cleanupSprites);
+    	copy2.forEach(sprite -> {
+			try {
+				sprite.active.set(false);
+				sprite.removeSpriteFromManager(true);
+				JGSceneManager.activeScene.get().layers.forEach(layer -> {
+					layer.removeFromLayer(sprite);
+				});
+			} catch (Exception e) {}
+		});
+    	cleanupSprites.clear();
+
     }
 }

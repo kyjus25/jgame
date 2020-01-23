@@ -100,8 +100,6 @@ public class JGServer implements Runnable  {
                 List<JGCreateRequest> copy = new ArrayList<>(queue);
                 queue.clear();
                 copy.forEach(item -> {
-                    // TODO OH MY GARBAGE COLLECTION WITH ARROWS
-                    // System.out.println(i.sender.get() + " " + i.type.get());
 
                     if (i.savePos.get()) {
                         lastKnownPos.put(i.uuid.get(), i);
@@ -111,7 +109,14 @@ public class JGServer implements Runnable  {
                         i.sender.set("Host");
                         sendHost(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get());
                     } else {
-                        sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get(), i.sender.get());
+                        if (i.type.get() != null && i.type.get().contains("EVENT")) {
+                            if (i.type.get().contains("DELETE")) {
+                                lastKnownPos.remove(i.uuid.get());
+                            }
+                            sendAll(i.type.get());
+                        } else {
+                            sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get(), i.sender.get());
+                        }
                     }
                 });
 

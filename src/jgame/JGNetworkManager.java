@@ -106,8 +106,16 @@ public class JGNetworkManager extends CommonControls {
                     }
                 });
             }
+            if (packet.startsWith("EVENT")) {
+                if (packet.split("[ ]")[1].equals("DELETE")) {
+                    JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
+                    JGame.spriteManager.deleteSprite(sprite);
+                } else {
+
+                }
+            }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
-            if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.add(packet); }
+            if (!packet.isEmpty() && !packet.startsWith("OK") && !packet.startsWith("EVENT")) { packetStream.add(packet); }
         }
     }
 
@@ -132,10 +140,20 @@ public class JGNetworkManager extends CommonControls {
         submit(type + " " + newX + " " + newY + " " + uuid + " \n");
     }
 
+    public void sendEvent(String eventType, String data) {
+        // TELL THE HOST TO CREATE IT
+        submit("EVENT" + " " + eventType + " " + data + " \n");
+    }
+
+    public void sendDelete(String uuid) {
+        sendEvent("DELETE", uuid);
+    }
+
     public void sendAll(String type, double newX, double newY, String uuid, boolean savePos) {
         // TELL THE HOST TO CREATE IT
         submit(type + " " + newX + " " + newY + " " + uuid + " SENDHOST " + savePos + " \n");
     }
+
     public void sendAll(String type, double newX, double newY, String uuid) {
         // TELL THE HOST TO CREATE IT
         submit(type + " " + newX + " " + newY + " " + uuid + " SENDHOST true" + " \n");

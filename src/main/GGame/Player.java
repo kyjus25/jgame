@@ -56,7 +56,7 @@ public class Player extends JGSprite {
 			}
 		}
     	if (sprite.type.get().equals("coin")) {
-			JGame.spriteManager.deleteSprite(sprite);
+    		JGame.networkManager.sendDelete(sprite.uuid.get());
 		}
 	}
 		
