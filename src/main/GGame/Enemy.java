@@ -23,30 +23,31 @@ public class Enemy extends JGSprite {
 	StackPane healthBar = new StackPane();
 	Rectangle healthRed;
 	Rectangle healthGreen;
-    public Enemy(double x, double y, int cx, int cy) {
+    public Enemy() {
     	BorderPane panel = new BorderPane();
     	Random rand = new Random();
     	speed = rand.nextInt(4) + 1;
-    	Rectangle rectangle = new Rectangle(x, y, cx, cy);
+    	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
+    	type.set("enemy");
     	canMove.set(false);
     	active.set(true);
     	rectangle.setFill(Color.WHITE);
     	velocityY.set(speed);
 
-    	healthRed = new Rectangle(0, 0, cx, 10);
+    	healthRed = new Rectangle(0, 0, 50, 10);
     	healthRed.setFill(Color.RED);
     	
-    	healthGreen = new Rectangle(0, 0, cx, 10);
+    	healthGreen = new Rectangle(0, 0, 50, 10);
     	healthGreen.setFill(Color.GREEN);
     	
     	healthBar.getChildren().addAll(healthRed, healthGreen);
     	
     	panel.setTop(healthBar);
     	panel.setCenter(rectangle);
-    	panel.setTranslateX(x);
-    	panel.setTranslateY(y);
-    	positionX.set(x);
-    	positionY.set(y);
+    	panel.setTranslateX(0);
+    	panel.setTranslateY(0);
+    	positionX.set(0.0);
+    	positionY.set(0.0);
     	node.set(panel);
 //    	System.out.println(speed);
     }

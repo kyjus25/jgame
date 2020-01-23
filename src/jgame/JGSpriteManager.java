@@ -73,13 +73,13 @@ public class JGSpriteManager {
     }
 
     public void deleteSprite(JGSprite sprite) {
-		sprite.active.set(false);
-		sprite.removeSpriteFromManager(true);
-		JGSceneManager.activeScene.get().layers.forEach(layer -> {
-			try {
-				layer.removeFromLayer(sprite);
-			} catch (Exception e) {}
-		});
+		try {
+			sprite.active.set(false);
+			sprite.removeSpriteFromManager(true);
+			JGSceneManager.activeScene.get().layers.forEach(layer -> {
+			layer.removeFromLayer(sprite);
+			});
+		} catch (Exception e) {}
 	}
 
     public void cleanup() {

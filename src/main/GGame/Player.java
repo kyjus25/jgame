@@ -55,6 +55,9 @@ public class Player extends JGSprite {
 				velocityY.set(0.0);
 			}
 		}
+    	if (sprite.type.get().equals("coin")) {
+			JGame.spriteManager.deleteSprite(sprite);
+		}
 	}
 		
 	public void onPhysics(JGPhysics p) {

@@ -23,7 +23,7 @@ public class JGNetworkManager extends CommonControls {
 
     public Field<Boolean> running = new Field<>(false);
     public JGUser self = new JGUser("Grant");
-    public Field<Boolean> hosting = new Field<>(true);
+    public Field<Boolean> hosting = new Field<>(false);
 
     public FieldList<JGUser> users = new FieldList<>();
 

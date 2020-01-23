@@ -13,9 +13,10 @@ import jgame.JGPhysics;
 import jgame.JGSprite;
 
 public class Coin extends JGSprite {
-    public Coin(double x, double y) {
-    	Rectangle rectangle = new Rectangle(x, y, 20, 40);
+    public Coin() {
+    	Rectangle rectangle = new Rectangle(0, 0, 20, 40);
     	rectangle.setFill(Color.YELLOW);
+    	type.set("coin");
     	node.set(rectangle);
     	Random rand = new Random();
     	canMove.set(true);
@@ -64,8 +65,6 @@ public class Coin extends JGSprite {
     }
     
 	public void onCollision(JGSprite sprite) {
-		if (sprite instanceof Player) {active.set(false);}
-		if (sprite instanceof Coin) {return;}
 		if (velocityY.get() > 0) {
 			velocityY.set(0.0);
 		}	
