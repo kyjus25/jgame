@@ -14,6 +14,9 @@ import javafx.scene.control.ToggleGroup;
 import jgame.generics.FieldReadOnly;
 
 public class JGMenuBar extends FieldReadOnly<MenuBar> {
+
+	RadioMenuItem sprites = new RadioMenuItem();
+
 	public JGMenuBar() {
 		super(new MenuBar());
 		addEvents();
@@ -86,7 +89,7 @@ public class JGMenuBar extends FieldReadOnly<MenuBar> {
 		RadioMenuItem avgFPS = new RadioMenuItem(); toggleGroup.getToggles().add(avgFPS); m.getItems().add(avgFPS);
 		RadioMenuItem currFPS = new RadioMenuItem(); toggleGroup.getToggles().add(currFPS); m.getItems().add(currFPS);
 		RadioMenuItem name = new RadioMenuItem(); toggleGroup.getToggles().add(name); m.getItems().add(name);
-		RadioMenuItem sprites = new RadioMenuItem(); toggleGroup.getToggles().add(sprites); m.getItems().add(sprites);
+		toggleGroup.getToggles().add(sprites); m.getItems().add(sprites);
 		RadioMenuItem players = new RadioMenuItem(); toggleGroup.getToggles().add(players); m.getItems().add(players);
 
 		JGame.tick.addEventHandler(tick -> {
@@ -100,12 +103,6 @@ public class JGMenuBar extends FieldReadOnly<MenuBar> {
 			mode.setText("Mode: " + (JGame.networkManager.hosting.get() ? "Host" : "Client"));
 			name.setText("Name: " + JGame.networkManager.self.nick.get());
 			players.setText("Player: " + JGame.networkManager.getPlayerNumber() + " of " + list.size());
-		});
-
-		JGame.spriteManager.activeSprites.addEventHandler((list, changed) -> {
-			if (changed != null) {
-				sprites.setText("Active Sprites: " + list.size());
-			}
 		});
 	}
 

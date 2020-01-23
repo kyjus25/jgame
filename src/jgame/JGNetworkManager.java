@@ -23,7 +23,7 @@ public class JGNetworkManager extends CommonControls {
 
     public Field<Boolean> running = new Field<>(false);
     public JGUser self = new JGUser("Grant");
-    public Field<Boolean> hosting = new Field<>(false);
+    public Field<Boolean> hosting = new Field<>(true);
 
     public FieldList<JGUser> users = new FieldList<>();
 
@@ -102,11 +102,7 @@ public class JGNetworkManager extends CommonControls {
                     List<JGUser> foundUser = users.stream().filter(p -> p.nick.get().equals(activeUser.uuid.get())).collect(Collectors.toList());
                     if (foundUser.size() == 0) {
                         // TODO CAN'T GET THE SPRITE REMOVED???? - JMW
-                        // activeUser.active.set(false);
-                        // JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
-                        // System.out.println("BEFORE " + layer.pane.get().getChildren());
-                        // layer.removeFromLayer(activeUser);
-                        // System.out.println("AFTER " + layer.pane.get().getChildren());
+                        JGame.spriteManager.deleteSprite(activeUser);
                     }
                 });
             }

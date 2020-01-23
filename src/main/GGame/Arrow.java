@@ -11,6 +11,7 @@ import jgame.JGPhysics;
 //import main.ID;
 //import main.gameengine.nodes.Item;
 import jgame.JGSprite;
+import jgame.JGame;
 
 public class Arrow extends JGSprite {
 	Rectangle rectangle;
@@ -51,13 +52,16 @@ public class Arrow extends JGSprite {
     }
     
 	public void onCollision(JGSprite sprite) {
-		if (sprite instanceof Enemy) {
+		if (sprite.type.get().equals("enemy")) {
 			Enemy e = (Enemy) sprite;
 			e.health.set(e.health.get() - 25);
-			active.set(false);
+			JGame.spriteManager.deleteSprite(this);
         	if (e.health.get() <= 0) {
         		e.active.set(false);
         	}
+		}
+		if (sprite.type.get().equals("ground")) {
+			JGame.spriteManager.deleteSprite(this);
 		}
 	}
 	

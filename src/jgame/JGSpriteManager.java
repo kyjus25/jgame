@@ -37,6 +37,7 @@ public class JGSpriteManager {
 			activeSprites.forEach((sprite) -> {
 				sprite.update();
 			});
+			JGame.menuBar.sprites.setText("Active Sprites: " + activeSprites.size());
 		});
 	}
 
@@ -70,6 +71,16 @@ public class JGSpriteManager {
             }
         }
     }
+
+    public void deleteSprite(JGSprite sprite) {
+		sprite.active.set(false);
+		sprite.removeSpriteFromManager(true);
+		JGSceneManager.activeScene.get().layers.forEach(layer -> {
+			try {
+				layer.removeFromLayer(sprite);
+			} catch (Exception e) {}
+		});
+	}
 
     public void cleanup() {
     	List<JGSprite> copy = new ArrayList<>();
