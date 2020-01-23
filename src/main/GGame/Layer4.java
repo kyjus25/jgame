@@ -32,7 +32,7 @@ public class Layer4 extends JGLayer {
 						coin.positionY.set(enemy.positionY.get());
 						addToLayer(coin);
 					}
-					JGame.spriteManager.deleteSprite(enemy);
+					JGame.networkManager.sendDelete(enemy.uuid.get());
 				}
 			});
 //	    	rectangle.setFill(Color.PURPLE);
