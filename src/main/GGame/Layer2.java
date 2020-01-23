@@ -16,24 +16,24 @@ public class Layer2 extends JGLayer {
 	
 	public void initialize() {
 		System.out.println("Layer2 initialize");
-//    	Rectangle rectangle = new Rectangle(0, 0, 100, 100);
-//    	rectangle.setFill(Color.BLUE);
-		JGSprite ground = new JGSprite();
-    	Group group = new Group();
-    	ground.node.set(group);
-		for (int x = 0; x < 50; x++) {
-//			for (int y = 0; y < 60; y++) {
-//				Random rand = new Random();
-//				int r = rand.nextInt(255);
-//				int g = rand.nextInt(255);
-//				int b = rand.nextInt(255);
-//				Color randomColour = Color.rgb(r, g, b);
-				Rectangle rectangle = new Rectangle(x * 100, 500, 100, 100);
-		    	rectangle.setFill(Color.BLACK);
-		    	group.getChildren().add(rectangle);
-//			}
+		addToLayer(create("ground"));
+	}
+
+	public JGSprite create(String type) {
+		JGSprite sprite = null;
+		switch (type) {
+			case "ground":
+				sprite = new JGSprite();
+				sprite.type.set("ground");
+				Group group = new Group();
+				sprite.node.set(group);
+				for (int x = 0; x < 50; x++) {
+					Rectangle rectangle = new Rectangle(x * 100, 500, 100, 100);
+					rectangle.setFill(Color.BLACK);
+					group.getChildren().add(rectangle);
+				}
+				break;
 		}
-		pane.get().getChildren().add(ground.node.get());
-    
+		return sprite;
 	}
 }

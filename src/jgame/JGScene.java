@@ -34,7 +34,7 @@ public class JGScene extends CommonControls {
 	public Field<String> name = new Field<>("Default");
 
 	public Field<String> playerSprite = new Field<>("player");
-	public Field<String> networkSprite = new Field<>();
+	public Field<String> networkSprite = new Field<>("player");
 	
 	public void reset() {
 		stackPane.get().setTranslateX(0);

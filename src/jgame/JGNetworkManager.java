@@ -22,8 +22,8 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Justin");
-    public Field<Boolean> hosting = new Field<>(true);
+    public JGUser self = new JGUser("Grant");
+    public Field<Boolean> hosting = new Field<>(false);
 
     public FieldList<JGUser> users = new FieldList<>();
 
@@ -220,13 +220,19 @@ public class JGNetworkManager extends CommonControls {
                             sprite.positionY.set(Double.parseDouble(posY));
                         } else {
                             // Create it
-                            JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
-                            JGSprite newSprite = layer.create(type);
-                            newSprite.uuid.set(uuid);
-                            if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
-                            if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
-                            layer.addToLayer(newSprite, true);
-                            if (!hosting.get()) { newSprite.addSpriteToManager(true); }
+                            String finalType = type;
+                            JGSceneManager.activeScene.get().layers.forEach(layer -> {
+                                try {
+                                    JGSprite newSprite = layer.create(finalType);
+                                    if (newSprite != null) {
+                                        newSprite.uuid.set(uuid);
+                                        if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
+                                        if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
+                                        layer.addToLayer(newSprite, true);
+                                        if (!hosting.get()) { newSprite.addSpriteToManager(true); }
+                                    }
+                                } catch (Exception r) {}
+                            });
                         }
                     }
                 }

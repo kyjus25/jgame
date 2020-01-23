@@ -25,7 +25,9 @@ public class GLevel extends JGScene {
 	Layer4 enemyLayer;
 	JGPhysics gravity;
 
-	public GLevel() {}
+	public GLevel() {
+		networkSprite.set("player2");
+	}
 
 	public void initialize() {
 		System.out.println("GLevel initialize");
@@ -40,8 +42,6 @@ public class GLevel extends JGScene {
 		ground.zIndex.set(1);
 		enemyLayer.zIndex.set(2);
 		playerLayer.zIndex.set(3);
-		
-//		
 		
 		layers.add(background);
 		layers.add(ground);
@@ -59,19 +59,18 @@ public class GLevel extends JGScene {
 	
 	public void onGameLoop(ActionEvent event) {
 		
-		if (playerLayer != null) {
-			Bounds backgroundboundsInScene = background.pane.get().localToScene(background.pane.get().getBoundsInLocal());
-//			Bounds backgroundboundsInScreen = background.pane.get().localToScreen(background.pane.get().getBoundsInLocal());
-			Bounds boundsInScene = playerLayer.player.node.get().localToScene(playerLayer.player.node.get().getBoundsInLocal());
-//			Bounds boundsInScreen = playerLayer.player.node.get().localToScreen(playerLayer.player.node.get().getBoundsInLocal());
-			if (boundsInScene.getMinX() >= 400 && backgroundboundsInScene.getMaxX() >= 800) {
-				stackPane.get().setTranslateX(stackPane.get().getTranslateX() - playerLayer.player.speed);
-			}
-			
-			if (boundsInScene.getMaxX() <= 200 && backgroundboundsInScene.getMinX() <= 0) {
-				stackPane.get().setTranslateX(stackPane.get().getTranslateX() + playerLayer.player.speed);
-			}
-
-		}
+//		if (playerLayer != null) {
+//			Bounds backgroundboundsInScene = background.pane.get().localToScene(background.pane.get().getBoundsInLocal());
+////			Bounds backgroundboundsInScreen = background.pane.get().localToScreen(background.pane.get().getBoundsInLocal());
+//			Bounds boundsInScene = playerLayer.player.node.get().localToScene(playerLayer.player.node.get().getBoundsInLocal());
+////			Bounds boundsInScreen = playerLayer.player.node.get().localToScreen(playerLayer.player.node.get().getBoundsInLocal());
+//			if (boundsInScene.getMinX() >= 400 && backgroundboundsInScene.getMaxX() >= 800) {
+//				stackPane.get().setTranslateX(stackPane.get().getTranslateX() - playerLayer.player.speed);
+//			}
+//
+//			if (boundsInScene.getMaxX() <= 200 && backgroundboundsInScene.getMinX() <= 0) {
+//				stackPane.get().setTranslateX(stackPane.get().getTranslateX() + playerLayer.player.speed);
+//			}
+//		}
 	}
 }

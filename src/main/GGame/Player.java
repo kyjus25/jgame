@@ -9,6 +9,7 @@ import jgame.JGPhysics;
 //import main.ID;
 //import main.gameengine.nodes.Item;
 import jgame.JGSprite;
+import jgame.JGame;
 
 public class Player extends JGSprite {
 	public double speed = 5.0;
@@ -16,6 +17,8 @@ public class Player extends JGSprite {
     public Player() {
     	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
 
+    	type.set("player");
+		uuid.set(JGame.networkManager.self.nick.get());
     	canMove.set(true);
     	active.set(false);
     	rectangle.setFill(Color.RED);
@@ -43,8 +46,10 @@ public class Player extends JGSprite {
 	}
 	
 	public void onCollision(JGSprite sprite) {
-		if (velocityY.get() > 0) {
-			velocityY.set(0.0);
+    	if (sprite.type.get().equals("player2") || sprite.type.get().equals("ground")) {
+			if (velocityY.get() > 0) {
+				velocityY.set(0.0);
+			}
 		}
 	}
 		

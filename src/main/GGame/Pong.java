@@ -53,7 +53,7 @@ class PongLayer extends JGLayer {
     }
 
     public JGSprite create(String type) {
-        JGSprite sprite = new JGSprite();
+        JGSprite sprite = null;
         switch (type) {
             case "player":
                 sprite = new PongPlayer();
@@ -107,7 +107,7 @@ class PongPaddle extends JGSprite {
         Rectangle rectangle = new Rectangle(0, 0, 20, 100);
 
         type.set("paddle");
-        canMove.set(true);
+        canMove.set(false);
         active.set(false);
         rectangle.setFill(Color.WHITE);
         node.set(rectangle);

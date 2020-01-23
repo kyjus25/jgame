@@ -66,8 +66,7 @@ public class GGame extends JGame {
 
 		level2.stackPane.get().getChildren().add(circle);
 
-
-		JGame.sceneManager.changeSceneByName("Pong");
+		JGame.sceneManager.changeSceneByName("GLevel");
 		
 //		keyboardManager.addEventHandler(KeyEvent.KEY_RELEASED, (event) -> {
 //			System.out.println("2" + KeyEvent.KEY_RELEASED + " " + event);

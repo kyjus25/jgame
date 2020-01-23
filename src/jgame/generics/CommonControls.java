@@ -18,7 +18,11 @@ public class CommonControls {
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_PRESSED, (KeyCode k) -> this.onKeyPress(k));
 		JGKeyboardManager.addEventHandler(KeyEvent.KEY_RELEASED, (KeyCode k) -> this.onKeyReleased(k));
 		JGKeyboardManager.addEventHandler((KeyCode k, boolean b) -> this.onKeyEvent(k, b));
-		JGPhysicsManager.addEventHandler((JGPhysics p, JGSprite s) -> onPhysics(p, s));
+		JGPhysicsManager.addEventHandler((JGPhysics p, JGSprite s) -> {
+			if (JGame.networkManager.hosting.get()) {
+				onPhysics(p, s);
+			}
+		});
 		JGSceneManager.activeScene.addEventHandler((JGScene scene) -> onScene(scene));
 		JGMouseManager.addEventHandler((MouseEvent me, boolean b) -> onMouseEvent(me, b));
 //		JGKeyboardManager.addEventHandler((KeyCodeCombination k, boolean b) -> this.onKeyEvent(k, b));
