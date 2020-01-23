@@ -88,6 +88,9 @@ public class JGNetworkManager extends CommonControls {
         initializeHeartBeat();
         while (running.get()) {
             String packet = recieve();
+
+            System.out.println(packet);
+
             if (packet.startsWith("LISTUSERS")) {
                 users.clear();
 
@@ -186,7 +189,6 @@ public class JGNetworkManager extends CommonControls {
         JGame.spriteManager.activeSprites.forEach(sprite -> {
             String type = sprite.type.get();
             if ((hosting.get() && !type.equals(networkSprite.get())) || type.equals(playerSprite.get())) {
-
 
                 if (sprite.type.get().equals(playerSprite.get())) {
                     type = networkSprite.get();

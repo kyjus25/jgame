@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import jgame.JGSprite;
+import jgame.JGame;
 import jgame.generics.Field;
 import jgame.generics.FieldEvent;
 
@@ -64,6 +65,16 @@ public class Enemy extends JGSprite {
 		if (type.equals("HEALTH") && data.contains(uuid.get())) {
 			System.out.println("LOWERING HEALTH");
 			health.set(health.get() - 25);
+
+			if (health.get() < 0) {
+//				for (int ii = 0; ii < 5; ii++) {
+//					Coin coin = (Coin) create("coin");
+//					coin.positionX.set(enemy.positionX.get());
+//					coin.positionY.set(enemy.positionY.get());
+//					addToLayer(coin);
+//				}
+				JGame.networkManager.sendDelete(uuid.get());
+			}
 		}
 	}
 

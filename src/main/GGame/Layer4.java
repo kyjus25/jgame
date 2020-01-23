@@ -24,17 +24,16 @@ public class Layer4 extends JGLayer {
 			Enemy enemy = (Enemy) create("enemy");
 			enemy.positionX.set(x + 800.0);
 			enemy.positionY.set(y + 0.0);
-			enemy.health.addEventHandler(health -> {
-				if (health <= 0) {
-					for (int ii = 0; ii < 5; ii++) {
-						Coin coin = (Coin) create("coin");
-						coin.positionX.set(enemy.positionX.get());
-						coin.positionY.set(enemy.positionY.get());
-						addToLayer(coin);
-					}
-					JGame.networkManager.sendDelete(enemy.uuid.get());
-				}
-			});
+//			enemy.health.addEventHandler(health -> {
+//				if (health <= 0) {
+//					for (int ii = 0; ii < 5; ii++) {
+//						Coin coin = (Coin) create("coin");
+//						coin.positionX.set(enemy.positionX.get());
+//						coin.positionY.set(enemy.positionY.get());
+//						addToLayer(coin);
+//					}
+//				}
+//			});
 //	    	rectangle.setFill(Color.PURPLE);
 //	    	pane.get().getChildren().add(enemy.node.get());
 	    	addToLayer(enemy);

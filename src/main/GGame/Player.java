@@ -39,6 +39,7 @@ public class Player extends JGSprite {
 		if (key == KeyCode.SPACE) {velocityY.set(-15.0);}
 
 		if (key == KeyCode.P) {
+			System.out.println("trying to create arrow");
 			JGame.networkManager.sendAll("arrow", positionX.get() + 60, positionY.get(), "EMPTY", false);
 		}
 	}
