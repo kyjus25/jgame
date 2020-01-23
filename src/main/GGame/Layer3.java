@@ -42,25 +42,6 @@ public class Layer3 extends JGLayer {
 		}
 		return sprite;
 	}
-
-	public void onMouseEvent(MouseEvent event, boolean isPressed) {
-//		if (!isPressed) {
-//			Bounds bounds = player.node.get().localToScene(player.node.get().getBoundsInLocal());
-//			Arrow arrow = new Arrow(player.positionX.get() + 60, player.positionY.get());
-//			addToLayer(arrow);
-////		    double angle = (float)Math.toDegrees(Math.atan2(event.getY() - player.positionY.get(), event.getX() - player.positionX.get()));
-////		    arrow.rotate.set(angle);
-////		    arrow.velocityY.set((angle * angle / angle) * -.1);
-////		    System.out.println("angle" + angle);
-//
-//
-//			arrow.active.addEventHandler(isActive -> {
-//				if (!isActive) {
-//					removeFromLayer(arrow);
-//				}
-//			});
-//		}
-	}
 	
     public void onGameLoop(ActionEvent event) {
     	

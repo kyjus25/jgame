@@ -74,6 +74,7 @@ public class JGame extends CommonControls {
 				tick.set(event);
 				if (!networkManager.hosting.get()) {
 					networkManager.onGameLoop(event);
+					JGSceneManager.activeScene.get().onGameLoop(event);
 				}
 
 //				if (debug.get()) {

@@ -12,10 +12,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
-import jgame.JGLayer;
-import jgame.JGPhysics;
-import jgame.JGScene;
-import jgame.JGSprite;
+import jgame.*;
 
 public class GLevel extends JGScene {
 	
@@ -59,18 +56,20 @@ public class GLevel extends JGScene {
 	
 	public void onGameLoop(ActionEvent event) {
 		
-//		if (playerLayer != null) {
-//			Bounds backgroundboundsInScene = background.pane.get().localToScene(background.pane.get().getBoundsInLocal());
-////			Bounds backgroundboundsInScreen = background.pane.get().localToScreen(background.pane.get().getBoundsInLocal());
-//			Bounds boundsInScene = playerLayer.player.node.get().localToScene(playerLayer.player.node.get().getBoundsInLocal());
-////			Bounds boundsInScreen = playerLayer.player.node.get().localToScreen(playerLayer.player.node.get().getBoundsInLocal());
-//			if (boundsInScene.getMinX() >= 400 && backgroundboundsInScene.getMaxX() >= 800) {
-//				stackPane.get().setTranslateX(stackPane.get().getTranslateX() - playerLayer.player.speed);
-//			}
-//
-//			if (boundsInScene.getMaxX() <= 200 && backgroundboundsInScene.getMinX() <= 0) {
-//				stackPane.get().setTranslateX(stackPane.get().getTranslateX() + playerLayer.player.speed);
-//			}
-//		}
+		if (playerLayer != null) {
+
+			JGSprite player = JGame.spriteManager.getSpritesByType("player").get(0);
+			Double playerSpeed = 5.0;
+
+			Bounds backgroundboundsInScene = background.pane.get().localToScene(background.pane.get().getBoundsInLocal());
+			Bounds boundsInScene = player.node.get().localToScene(player.node.get().getBoundsInLocal());
+			if (boundsInScene.getMinX() >= 400 && backgroundboundsInScene.getMaxX() >= 800) {
+				stackPane.get().setTranslateX(stackPane.get().getTranslateX() - playerSpeed);
+			}
+
+			if (boundsInScene.getMaxX() <= 200 && backgroundboundsInScene.getMinX() <= 0) {
+				stackPane.get().setTranslateX(stackPane.get().getTranslateX() + playerSpeed);
+			}
+		}
 	}
 }
