@@ -69,6 +69,20 @@ public class JGSprite extends CommonControls {
 			JGame.spriteManager.activeSprites.add(this);
 		}
 	}
+
+	public void removeSpriteFromManager() {
+		if (JGame.networkManager.hosting.get()) {
+			JGame.spriteManager.spriteList.remove(this);
+			JGame.spriteManager.activeSprites.remove(this);
+		}
+	}
+
+	public void removeSpriteFromManager(boolean force) {
+		if (force) {
+			JGame.spriteManager.spriteList.remove(this);
+			JGame.spriteManager.activeSprites.remove(this);
+		}
+	}
 	
 	public void addToScene() {
 		JGame.sceneManager.activeScene.get().stackPane.get().getChildren().add(node.get());

@@ -92,9 +92,23 @@ public class JGNetworkManager extends CommonControls {
             String packet = recieve();
             if (packet.startsWith("LISTUSERS")) {
                 users.clear();
+
                 for (int i = 1; i < packet.split("[ ]").length; i++) {
                     users.add(new JGUser(packet.split("[ ]")[i]));
                 }
+
+                List<JGSprite> activeUsers = JGame.spriteManager.getSpritesByType(networkSprite.get());
+                activeUsers.forEach(activeUser -> {
+                    List<JGUser> foundUser = users.stream().filter(p -> p.nick.get().equals(activeUser.uuid.get())).collect(Collectors.toList());
+                    if (foundUser.size() == 0) {
+                        // TODO CAN'T GET THE SPRITE REMOVED???? - JMW
+                        // activeUser.active.set(false);
+                        // JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
+                        // System.out.println("BEFORE " + layer.pane.get().getChildren());
+                        // layer.removeFromLayer(activeUser);
+                        // System.out.println("AFTER " + layer.pane.get().getChildren());
+                    }
+                });
             }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
             if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.add(packet); }

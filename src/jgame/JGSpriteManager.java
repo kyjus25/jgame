@@ -48,6 +48,11 @@ public class JGSpriteManager {
 			return null;
 		}
 	}
+
+	public List<JGSprite> getSpritesByType(String type) {
+		return activeSprites.stream().filter(p -> p.type.get().equals(type)).collect(Collectors.toList());
+
+	}
 	
     public void checkCollisions() {
     	List<JGSprite> copy = new ArrayList<>();

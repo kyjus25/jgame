@@ -54,7 +54,6 @@ class PongLayer extends JGLayer {
 
     public JGSprite create(String type) {
         JGSprite sprite = new JGSprite();
-        System.out.println("TYPE" + type);
         switch (type) {
             case "player":
                 sprite = new PongPlayer();
