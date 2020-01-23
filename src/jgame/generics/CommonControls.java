@@ -23,6 +23,7 @@ public class CommonControls {
 				onPhysics(p, s);
 			}
 		});
+		JGNetworkManager.addEventHandler((String type, String data) -> onNetworkEvent(type, data));
 		JGSceneManager.activeScene.addEventHandler((JGScene scene) -> onScene(scene));
 		JGMouseManager.addEventHandler((MouseEvent me, boolean b) -> onMouseEvent(me, b));
 //		JGKeyboardManager.addEventHandler((KeyCodeCombination k, boolean b) -> this.onKeyEvent(k, b));
@@ -50,4 +51,5 @@ public class CommonControls {
 	public void onPhysics(JGPhysics physics, JGSprite sprite) {}
 	public void onPhysics(JGPhysics physics) {}
 	public void onScene(JGScene scene) {}
+	public void onNetworkEvent(String type, String data) {}
 }

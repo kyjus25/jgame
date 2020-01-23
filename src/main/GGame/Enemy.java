@@ -59,8 +59,15 @@ public class Enemy extends JGSprite {
     	}
 
     }
-    
-    public void collidesWall() {
+
+	public void onNetworkEvent(String type, String data) {
+		if (type.equals("HEALTH") && data.contains(uuid.get())) {
+			System.out.println("LOWERING HEALTH");
+			health.set(health.get() - 25);
+		}
+	}
+
+	public void collidesWall() {
     	Bounds bounds = this.node.get().localToScene(this.node.get().getBoundsInLocal());
 		if (bounds.getMaxY() >= 600) {
 			velocityY.set(speed * -1.0);

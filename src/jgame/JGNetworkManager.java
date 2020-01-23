@@ -1,10 +1,7 @@
 package jgame;
 
 import javafx.event.ActionEvent;
-import jgame.generics.CommonControls;
-import jgame.generics.Field;
-import jgame.generics.FieldEvent;
-import jgame.generics.FieldList;
+import jgame.generics.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,12 +19,13 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Grant");
-    public Field<Boolean> hosting = new Field<>(false);
+    public JGUser self = new JGUser("Justin");
+    public Field<Boolean> hosting = new Field<>(true);
 
     public FieldList<JGUser> users = new FieldList<>();
 
     public FieldList<String> packetStream = new FieldList<>();
+    private static List<NetworkEvent> listeners = new ArrayList<>();
     public HashMap<String, JGCreateRequest> lastKnownPos = new HashMap<>();
 
     private JGScene activeScene;
@@ -101,7 +99,6 @@ public class JGNetworkManager extends CommonControls {
                 activeUsers.forEach(activeUser -> {
                     List<JGUser> foundUser = users.stream().filter(p -> p.nick.get().equals(activeUser.uuid.get())).collect(Collectors.toList());
                     if (foundUser.size() == 0) {
-                        // TODO CAN'T GET THE SPRITE REMOVED???? - JMW
                         JGame.spriteManager.deleteSprite(activeUser);
                     }
                 });
@@ -111,7 +108,10 @@ public class JGNetworkManager extends CommonControls {
                     JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
                     JGame.spriteManager.deleteSprite(sprite);
                 } else {
-
+                    listeners.forEach((item) -> {
+                        String substring = packet.split("EVENT " + packet.split("[ ]")[1] + " ")[1];
+                        item.changed(packet.split("[ ]")[1], substring);
+                    });
                 }
             }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
@@ -276,5 +276,13 @@ public class JGNetworkManager extends CommonControls {
                 }
             }
         }).start();
+    }
+
+    public static void addEventHandler(NetworkEvent toAdd) {
+        listeners.add(toAdd);
+    }
+
+    public void reset() {
+        listeners.clear();
     }
 }

@@ -53,12 +53,9 @@ public class Arrow extends JGSprite {
     
 	public void onCollision(JGSprite sprite) {
 		if (sprite.type.get().equals("enemy")) {
-			Enemy e = (Enemy) sprite;
-			e.health.set(e.health.get() - 25);
+			System.out.println("Sending lowering health");
+			JGame.networkManager.sendEvent("HEALTH", sprite.uuid.get());
 			JGame.spriteManager.deleteSprite(this);
-        	if (e.health.get() <= 0) {
-        		e.active.set(false);
-        	}
 		}
 		if (sprite.type.get().equals("ground")) {
 			JGame.spriteManager.deleteSprite(this);
