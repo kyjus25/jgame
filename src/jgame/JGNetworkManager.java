@@ -193,39 +193,41 @@ public class JGNetworkManager extends CommonControls {
             List<String> packets = new ArrayList<>(packetStream);
             packetStream.clear();
             packets.forEach(packet -> {
-                if (packet.startsWith("SCENE") && !hosting.get()) {
-                    String sceneName = packet.split("[ ]")[1];
-                    JGame.sceneManager.changeSceneByName(sceneName);
-                }
-
-                if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
-
-                    // if (packet.contains(":")) {
-                    // System.out.println(packet);
-                    String[] splitter = packet.split(" ");
-                    String type = splitter[1];
-                    String posX = splitter[2];
-                    String posY = splitter[3];
-                    String uuid = splitter[4];
-
-                    if (uuid.equals(self.nick.get())) {
-                        type = playerSprite.get();
+                if (packet != null) {
+                    if (packet.startsWith("SCENE") && !hosting.get()) {
+                        String sceneName = packet.split("[ ]")[1];
+                        JGame.sceneManager.changeSceneByName(sceneName);
                     }
 
-                    JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
-                    if (sprite != null) {
-                        // Update it
-                        sprite.positionX.set(Double.parseDouble(posX));
-                        sprite.positionY.set(Double.parseDouble(posY));
-                    } else {
-                        // Create it
-                        JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
-                        JGSprite newSprite = layer.create(type);
-                        newSprite.uuid.set(uuid);
-                        if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
-                        if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
-                        layer.addToLayer(newSprite, true);
-                        if (!hosting.get()) { newSprite.addSpriteToManager(true); }
+                    if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
+
+                        // if (packet.contains(":")) {
+                        // System.out.println(packet);
+                        String[] splitter = packet.split(" ");
+                        String type = splitter[1];
+                        String posX = splitter[2];
+                        String posY = splitter[3];
+                        String uuid = splitter[4];
+
+                        if (uuid.equals(self.nick.get())) {
+                            type = playerSprite.get();
+                        }
+
+                        JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
+                        if (sprite != null) {
+                            // Update it
+                            sprite.positionX.set(Double.parseDouble(posX));
+                            sprite.positionY.set(Double.parseDouble(posY));
+                        } else {
+                            // Create it
+                            JGLayer layer = JGSceneManager.activeScene.get().layers.get(0);
+                            JGSprite newSprite = layer.create(type);
+                            newSprite.uuid.set(uuid);
+                            if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
+                            if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
+                            layer.addToLayer(newSprite, true);
+                            if (!hosting.get()) { newSprite.addSpriteToManager(true); }
+                        }
                     }
                 }
             });
