@@ -132,8 +132,17 @@ public class JGNetworkManager extends CommonControls {
         }
     }
 
-    public void submit(String type, double newX, double newY, String uuid) {
+    public void send(String type, double newX, double newY, String uuid) {
         submit(type + " " + newX + " " + newY + " " + uuid + " \n");
+    }
+
+    public void sendAll(String type, double newX, double newY, String uuid, boolean savePos) {
+        // TELL THE HOST TO CREATE IT
+        submit(type + " " + newX + " " + newY + " " + uuid + " SENDHOST " + savePos + " \n");
+    }
+    public void sendAll(String type, double newX, double newY, String uuid) {
+        // TELL THE HOST TO CREATE IT
+        submit(type + " " + newX + " " + newY + " " + uuid + " SENDHOST true" + " \n");
     }
 
     private String recieve() {
@@ -225,9 +234,9 @@ public class JGNetworkManager extends CommonControls {
                                 try {
                                     JGSprite newSprite = layer.create(finalType);
                                     if (newSprite != null) {
-                                        newSprite.uuid.set(uuid);
                                         if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
                                         if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
+                                        if (!uuid.equals("EMPTY")) {newSprite.uuid.set(uuid); }
                                         layer.addToLayer(newSprite, true);
                                         if (!hosting.get()) { newSprite.addSpriteToManager(true); }
                                     }

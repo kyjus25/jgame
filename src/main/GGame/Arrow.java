@@ -14,10 +14,11 @@ import jgame.JGSprite;
 
 public class Arrow extends JGSprite {
 	Rectangle rectangle;
-    public Arrow(double x, double y) {
-		rectangle = new Rectangle(x, y, 50, 10);
+    public Arrow() {
+		rectangle = new Rectangle(0, 0, 50, 10);
 		rectangle.setFill(Color.RED);
 
+		type.set("arrow");
     	canMove.set(true);
     	active.set(true);
     	node.set(rectangle);

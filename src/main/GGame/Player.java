@@ -37,6 +37,10 @@ public class Player extends JGSprite {
 		if (key == KeyCode.A) {velocityX.set(speed * -1.0);}
 		if (key == KeyCode.D) {velocityX.set(speed * 1.0);}
 		if (key == KeyCode.SPACE) {velocityY.set(-15.0);}
+
+		if (key == KeyCode.P) {
+			JGame.networkManager.sendAll("arrow", positionX.get() + 60, positionY.get(), "EMPTY", false);
+		}
 	}
 	public void onKeyReleased(KeyCode key) {
 		if (key == KeyCode.W) {velocityY.set(0.0);}

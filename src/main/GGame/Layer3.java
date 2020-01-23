@@ -36,6 +36,9 @@ public class Layer3 extends JGLayer {
 			case "player2":
 				sprite = new Player2();
 				break;
+			case "arrow":
+				sprite = new Arrow();
+				break;
 		}
 		return sprite;
 	}

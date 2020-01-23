@@ -18,6 +18,7 @@ class JGCreateRequest {
     Field<String> posX = new Field<>();
     Field<String> posY = new Field<>();
     Field<String> uuid = new Field<>();
+    Field<Boolean> savePos = new Field<>(true);
     public JGCreateRequest(String sender, String type, String posX, String posY, String uuid) {
         this.sender.set(sender);
         this.type.set(type);
@@ -80,6 +81,10 @@ public class JGServer implements Runnable  {
         });
     }
 
+    public void sendHost(String s) {
+        users.get(0).submit(s);
+    }
+
     public JGCreateRequest getJGCreateRequest(String sender, String packet) {
         String[] splitter = packet.split(" ");
         String type = splitter[0];
@@ -95,8 +100,19 @@ public class JGServer implements Runnable  {
                 List<JGCreateRequest> copy = new ArrayList<>(queue);
                 queue.clear();
                 copy.forEach(item -> {
-                    lastKnownPos.put(i.uuid.get(), i);
-                    sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get(), i.sender.get());
+                    // TODO OH MY GARBAGE COLLECTION WITH ARROWS
+                    // System.out.println(i.sender.get() + " " + i.type.get());
+
+                    if (i.savePos.get()) {
+                        lastKnownPos.put(i.uuid.get(), i);
+                    }
+
+                    if (i.sender.get().equals("HostOnly")) {
+                        i.sender.set("Host");
+                        sendHost(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get());
+                    } else {
+                        sendAll(i.sender.get() + ": " + i.type.get() + " " + i.posX.get() + " " + i.posY.get() + " " + i.uuid.get(), i.sender.get());
+                    }
                 });
 
             }

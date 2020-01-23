@@ -48,6 +48,13 @@ public class JGUser implements Runnable {
             if (packet != null && !packet.isEmpty() && !packet.startsWith("BEAT") && !packet.startsWith("EXIT")) {
                 try {
                     JGCreateRequest request = server.getJGCreateRequest(nick.get(), packet);
+                    if (packet.contains("SENDHOST true")) {
+                        request.sender.set("HostOnly");
+                    }
+                    if (packet.contains("SENDHOST false")) {
+                        request.sender.set("HostOnly");
+                        request.savePos.set(false);
+                    }
                     server.sendQueue.add(request);
                 } catch (Exception e) {
                     e.printStackTrace();
