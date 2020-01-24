@@ -96,7 +96,6 @@ public class JGSpriteManager {
 				cleanupSprites.clear();
 				copy2.forEach(sprite -> {
 					if (sprite != null) {
-						System.out.println("DELETING " + sprite.uuid.get() + " - " + sprite.type.get());
 						JGSceneManager.activeScene.get().layers.forEach(layer -> {
 							layer.removeFromLayer(sprite);
 						});
