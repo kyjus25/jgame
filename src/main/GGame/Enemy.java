@@ -19,7 +19,7 @@ public class Enemy extends JGSprite {
 	public double speed = 1.0;
 //	public double health = 100;
 	public FieldEvent<Double> health = new FieldEvent<>(100.0);
-	
+	private Field<Boolean> alive = new Field<>(true);
 	
 	StackPane healthBar = new StackPane();
 	Rectangle healthRed;
@@ -63,16 +63,12 @@ public class Enemy extends JGSprite {
 
 	public void onNetworkEvent(String type, String data) {
 		if (type.equals("HEALTH") && data.contains(uuid.get())) {
-			System.out.println("LOWERING HEALTH");
 			health.set(health.get() - 25);
+			System.out.println("LOWERING HEALTH");
 
-			if (health.get() < 0) {
-//				for (int ii = 0; ii < 5; ii++) {
-//					Coin coin = (Coin) create("coin");
-//					coin.positionX.set(enemy.positionX.get());
-//					coin.positionY.set(enemy.positionY.get());
-//					addToLayer(coin);
-//				}
+			if (health.get() <= 0 && alive.get()) {
+				alive.set(false);
+				System.out.println("Deleting" + uuid.get());
 				JGame.networkManager.sendDelete(uuid.get());
 			}
 		}

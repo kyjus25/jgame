@@ -12,9 +12,12 @@ import jgame.JGPhysics;
 //import main.gameengine.nodes.Item;
 import jgame.JGSprite;
 import jgame.JGame;
+import jgame.generics.Field;
+import jgame.generics.FieldEvent;
 
 public class Arrow extends JGSprite {
 	Rectangle rectangle;
+	private Field<Boolean> alive = new Field<>(true);
     public Arrow() {
 		rectangle = new Rectangle(0, 0, 50, 10);
 		rectangle.setFill(Color.RED);
@@ -53,11 +56,17 @@ public class Arrow extends JGSprite {
     
 	public void onCollision(JGSprite sprite) {
 		if (sprite.type.get().equals("enemy")) {
-			JGame.networkManager.sendEvent("HEALTH", sprite.uuid.get());
-			JGame.networkManager.sendDelete(uuid.get());
+			if (alive.get()) {
+				JGame.networkManager.sendEvent("HEALTH", sprite.uuid.get());
+				alive.set(false);
+				JGame.networkManager.sendDelete(uuid.get());
+			}
 		}
 		if (sprite.type.get().equals("ground")) {
-			JGame.networkManager.sendDelete(uuid.get());
+			if (alive.get()) {
+				alive.set(false);
+				JGame.networkManager.sendDelete(uuid.get());
+			}
 		}
 	}
 	
