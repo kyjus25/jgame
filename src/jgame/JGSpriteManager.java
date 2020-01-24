@@ -89,18 +89,16 @@ public class JGSpriteManager {
     		}
     	});
 
-    	List<JGSprite> copy2 = new ArrayList<>();
-    	copy2.addAll(cleanupSprites);
-    	copy2.forEach(sprite -> {
+    	if (cleanupSprites.size() > 0) {
 			try {
+				JGSprite sprite = cleanupSprites.get(0);
 				JGSceneManager.activeScene.get().layers.forEach(layer -> {
 					layer.removeFromLayer(sprite);
 				});
 				sprite.active.set(false);
 				sprite.removeSpriteFromManager(true);
+				cleanupSprites.remove(sprite);
 			} catch (Exception e) {}
-		});
-    	cleanupSprites.clear();
-
+		}
     }
 }
