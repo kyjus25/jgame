@@ -19,6 +19,7 @@ class JGCreateRequest {
     Field<String> posY = new Field<>();
     Field<String> uuid = new Field<>();
     Field<Boolean> savePos = new Field<>(true);
+    Field<Boolean> deleted = new Field<>(false);
     public JGCreateRequest(String sender, String type, String posX, String posY, String uuid) {
         this.sender.set(sender);
         this.type.set(type);
@@ -58,8 +59,10 @@ public class JGServer implements Runnable  {
         JGCreateRequest player = lastKnownPos.get(nick);
 
         lastKnownPos.forEach((list, i) -> {
-            i.sender.set("Host");
-            sendQueue.add(i);
+            if (!i.deleted.get() || (i.deleted.get() && (i.type.get().equals(JGame.networkManager.networkSprite.get()) || i.type.get().equals(JGame.networkManager.playerSprite.get())))) {
+                i.sender.set("Host");
+                sendQueue.add(i);
+            }
         });
 
         if (player == null) {
@@ -101,8 +104,11 @@ public class JGServer implements Runnable  {
                 queue.clear();
                 copy.forEach(item -> {
 
-                    if (i.savePos.get()) {
-                        lastKnownPos.put(i.uuid.get(), i);
+                    if (i.savePos.get() && i.uuid.get() != null) {
+                        JGCreateRequest entry = lastKnownPos.get(i.uuid.get());
+                        if (entry == null || (entry != null && !entry.deleted.get())) {
+                            lastKnownPos.put(i.uuid.get(), i);
+                        }
                     }
 
                     if (i.sender.get().equals("HostOnly")) {
@@ -111,7 +117,13 @@ public class JGServer implements Runnable  {
                     } else {
                         if (i.type.get() != null && i.type.get().contains("EVENT")) {
                             if (i.type.get().contains("DELETE")) {
-                                lastKnownPos.remove(i.uuid.get());
+
+                                JGCreateRequest entry = lastKnownPos.get(i.type.get().split("[ ]")[2]);
+                                if (entry != null) {
+                                    entry.deleted.set(true);
+                                    lastKnownPos.put(entry.uuid.get(), entry);
+                                }
+
                             }
                             sendAll(i.type.get());
                         } else {

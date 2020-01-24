@@ -101,7 +101,9 @@ public class JGSpriteManager {
 					sprite.removeSpriteFromManager(true);
 					cleanupSprites.remove(sprite);
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
     }
 }

@@ -5,9 +5,7 @@ import jgame.generics.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JGNetworkManager extends CommonControls {
@@ -19,15 +17,15 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Grant");
-    public Field<Boolean> hosting = new Field<>(false);
+    public Map<String, String> env = System.getenv();
+    public JGUser self = new JGUser(env.get("SELF"));
+    public Field<Boolean> hosting = new Field<>(Boolean.parseBoolean(env.get("MODE")));
 
     public FieldList<JGUser> users = new FieldList<>();
 
     public FieldList<String> packetStream = new FieldList<>();
     private static List<NetworkEvent> listeners = new ArrayList<>();
     public HashMap<String, JGCreateRequest> lastKnownPos = new HashMap<>();
-
     private JGScene activeScene;
 
     public Field<String> playerSprite = new Field<>();
@@ -89,10 +87,6 @@ public class JGNetworkManager extends CommonControls {
         while (running.get()) {
             String packet = recieve();
 
-            if (!packet.contains("enemy") && !packet.contains("arrow")) {
-                System.out.println(packet);
-            }
-
             if (packet.startsWith("LISTUSERS")) {
                 users.clear();
 
@@ -108,19 +102,8 @@ public class JGNetworkManager extends CommonControls {
                     }
                 });
             }
-            if (packet.startsWith("EVENT")) {
-                if (packet.split("[ ]")[1].equals("DELETE")) {
-                    JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
-                    JGame.spriteManager.deleteSprite(sprite);
-                } else {
-                    listeners.forEach((item) -> {
-                        String substring = packet.split("EVENT " + packet.split("[ ]")[1] + " ")[1];
-                        item.changed(packet.split("[ ]")[1], substring);
-                    });
-                }
-            }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
-            if (!packet.isEmpty() && !packet.startsWith("OK") && !packet.startsWith("EVENT")) { packetStream.add(packet); }
+            if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.add(packet); }
         }
     }
 
@@ -190,6 +173,92 @@ public class JGNetworkManager extends CommonControls {
 
     public void onGameLoop(ActionEvent e) {
 
+        // HANDLE INCOMING TRAFFIC
+
+        if (packetStream.size() > 0) {
+            List<String> packets = new ArrayList<>(packetStream);
+            packetStream.clear();
+            packets.forEach(packet -> {
+                if (packet != null) {
+
+                    if (packet.startsWith("SCENE") && !hosting.get()) {
+                        String sceneName = packet.split("[ ]")[1];
+                        JGame.sceneManager.changeSceneByName(sceneName);
+                    }
+
+                    if (packet.startsWith("EVENT")) {
+                        if (packet.split("[ ]")[1].equals("DELETE")) {
+
+                            if (packet.contains("enemy")) {
+                                System.out.println("RAW PACKET: " + packet + " - " + packets.size());
+                            }
+
+                            JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
+
+                            if (sprite != null) {
+                                System.out.println("GOT DELETE EVENT: " + sprite.uuid.get());
+                                JGCreateRequest lastKnown = lastKnownPos.get(sprite.uuid.get());
+                                System.out.println("lastKnown: " + lastKnown);
+                                if (lastKnown != null) {
+                                    lastKnown.deleted.set(true);
+                                    System.out.println("set " + lastKnown.uuid.get() + " to " + lastKnown.deleted.get());
+                                    lastKnownPos.put(lastKnown.uuid.get(), lastKnown);
+                                }
+                                JGame.spriteManager.deleteSprite(sprite);
+                            } else {
+                                System.out.println("COULD NOT FIND SPRITE FOR DELETE: " + packet.split("[ ]")[2]);
+                            }
+                        } else {
+                            listeners.forEach((item) -> {
+                                String substring = packet.split("EVENT " + packet.split("[ ]")[1] + " ")[1];
+                                item.changed(packet.split("[ ]")[1], substring);
+                            });
+                        }
+                    }
+
+                    if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
+
+                        String[] splitter = packet.split(" ");
+                        String type = splitter[1];
+                        String posX = splitter[2];
+                        String posY = splitter[3];
+                        String uuid = splitter[4];
+
+                        if (uuid.equals(self.nick.get())) {
+                            type = playerSprite.get();
+                        }
+
+                        JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
+                        if (sprite != null) {
+                            // Update it
+                            sprite.positionX.set(Double.parseDouble(posX));
+                            sprite.positionY.set(Double.parseDouble(posY));
+                            lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                        } else {
+                            // Create it
+                            String finalType = type;
+                            if (lastKnownPos.get(uuid) == null || (lastKnownPos.get(uuid) != null && finalType.equals(networkSprite.get()) && !lastKnownPos.get(uuid).deleted.get())) {
+                                JGSceneManager.activeScene.get().layers.forEach(layer -> {
+                                    try {
+                                        JGSprite newSprite = layer.create(finalType);
+                                        if (newSprite != null) {
+                                            if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
+                                            if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
+                                            if (!uuid.equals("EMPTY")) {newSprite.uuid.set(uuid); }
+                                            System.out.println("CREATING " + newSprite.uuid.get() + " - " + newSprite.type.get());
+                                            lastKnownPos.put(newSprite.uuid.get(), new JGCreateRequest(self.nick.get(), newSprite.type.get(), newSprite.positionX.get().toString(), newSprite.positionY.get().toString(), newSprite.uuid.get()));
+                                            layer.addToLayer(newSprite, true);
+                                            if (!hosting.get()) { newSprite.addSpriteToManager(true); }
+                                        }
+                                    } catch (Exception r) {}
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // HANDLE OUTGOING TRAFFIC
         JGame.spriteManager.activeSprites.forEach(sprite -> {
             String type = sprite.type.get();
@@ -214,60 +283,6 @@ public class JGNetworkManager extends CommonControls {
                 }
             }
         });
-
-
-
-        // HANDLE INCOMING TRAFFIC
-
-        if (packetStream.size() > 0) {
-            List<String> packets = new ArrayList<>(packetStream);
-            packetStream.clear();
-            packets.forEach(packet -> {
-                if (packet != null) {
-                    if (packet.startsWith("SCENE") && !hosting.get()) {
-                        String sceneName = packet.split("[ ]")[1];
-                        JGame.sceneManager.changeSceneByName(sceneName);
-                    }
-
-                    if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
-
-                        // if (packet.contains(":")) {
-                        // System.out.println(packet);
-                        String[] splitter = packet.split(" ");
-                        String type = splitter[1];
-                        String posX = splitter[2];
-                        String posY = splitter[3];
-                        String uuid = splitter[4];
-
-                        if (uuid.equals(self.nick.get())) {
-                            type = playerSprite.get();
-                        }
-
-                        JGSprite sprite = JGame.spriteManager.getSpriteByUUID(uuid);
-                        if (sprite != null) {
-                            // Update it
-                            sprite.positionX.set(Double.parseDouble(posX));
-                            sprite.positionY.set(Double.parseDouble(posY));
-                        } else {
-                            // Create it
-                            String finalType = type;
-                            JGSceneManager.activeScene.get().layers.forEach(layer -> {
-                                try {
-                                    JGSprite newSprite = layer.create(finalType);
-                                    if (newSprite != null) {
-                                        if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
-                                        if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
-                                        if (!uuid.equals("EMPTY")) {newSprite.uuid.set(uuid); }
-                                        layer.addToLayer(newSprite, true);
-                                        if (!hosting.get()) { newSprite.addSpriteToManager(true); }
-                                    }
-                                } catch (Exception r) {}
-                            });
-                        }
-                    }
-                }
-            });
-        }
     }
 
     private void initializeHeartBeat() {
