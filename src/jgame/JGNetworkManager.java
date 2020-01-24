@@ -19,8 +19,8 @@ public class JGNetworkManager extends CommonControls {
     private BufferedWriter leave;
 
     public Field<Boolean> running = new Field<>(false);
-    public JGUser self = new JGUser("Justin");
-    public Field<Boolean> hosting = new Field<>(true);
+    public JGUser self = new JGUser("Grant");
+    public Field<Boolean> hosting = new Field<>(false);
 
     public FieldList<JGUser> users = new FieldList<>();
 
@@ -89,7 +89,9 @@ public class JGNetworkManager extends CommonControls {
         while (running.get()) {
             String packet = recieve();
 
-            System.out.println(packet);
+            if (!packet.contains("enemy") && !packet.contains("arrow")) {
+                System.out.println(packet);
+            }
 
             if (packet.startsWith("LISTUSERS")) {
                 users.clear();
@@ -144,12 +146,15 @@ public class JGNetworkManager extends CommonControls {
     }
 
     public void sendEvent(String eventType, String data) {
-        // TELL THE HOST TO CREATE IT
-        submit("EVENT" + " " + eventType + " " + data + " \n");
+        if (hosting.get()) {
+            submit("EVENT" + " " + eventType + " " + data + " \n");
+        }
     }
 
     public void sendDelete(String uuid) {
-        sendEvent("DELETE", uuid);
+        if (hosting.get()) {
+            sendEvent("DELETE", uuid);
+        }
     }
 
     public void sendAll(String type, double newX, double newY, String uuid, boolean savePos) {

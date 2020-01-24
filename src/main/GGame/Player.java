@@ -14,7 +14,7 @@ import jgame.JGame;
 
 public class Player extends JGSprite {
 	public double speed = 5.0;
-	public float timeout = 20;
+	public float timeout = 40;
 
     public Player() {
     	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
@@ -45,7 +45,7 @@ public class Player extends JGSprite {
 		if (key == KeyCode.SPACE) {velocityY.set(-15.0);}
 
 		if (key == KeyCode.P) {
-			if (timeout > 20) {
+			if (timeout > 40) {
 				JGame.networkManager.sendAll("arrow", positionX.get() + 60, positionY.get(), "EMPTY", false);
 				timeout = 0;
 			}

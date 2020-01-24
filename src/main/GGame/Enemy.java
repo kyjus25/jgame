@@ -68,7 +68,6 @@ public class Enemy extends JGSprite {
 
 			if (health.get() <= 0 && alive.get()) {
 				alive.set(false);
-				System.out.println("Deleting" + uuid.get());
 				JGame.networkManager.sendDelete(uuid.get());
 			}
 		}
