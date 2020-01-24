@@ -188,25 +188,15 @@ public class JGNetworkManager extends CommonControls {
 
                     if (packet.startsWith("EVENT")) {
                         if (packet.split("[ ]")[1].equals("DELETE")) {
-
-                            if (packet.contains("enemy")) {
-                                System.out.println("RAW PACKET: " + packet + " - " + packets.size());
-                            }
-
                             JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
 
                             if (sprite != null) {
-                                System.out.println("GOT DELETE EVENT: " + sprite.uuid.get());
                                 JGCreateRequest lastKnown = lastKnownPos.get(sprite.uuid.get());
-                                System.out.println("lastKnown: " + lastKnown);
                                 if (lastKnown != null) {
                                     lastKnown.deleted.set(true);
-                                    System.out.println("set " + lastKnown.uuid.get() + " to " + lastKnown.deleted.get());
                                     lastKnownPos.put(lastKnown.uuid.get(), lastKnown);
                                 }
                                 JGame.spriteManager.deleteSprite(sprite);
-                            } else {
-                                System.out.println("COULD NOT FIND SPRITE FOR DELETE: " + packet.split("[ ]")[2]);
                             }
                         } else {
                             listeners.forEach((item) -> {

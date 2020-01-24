@@ -51,14 +51,16 @@ public class Enemy extends JGSprite {
     	positionY.set(0.0);
     	node.set(panel);
 //    	System.out.println(speed);
+
+		JGame.tick.addEventHandler(tick -> {
+			healthGreen.setScaleX(health.get() * .01);
+		});
     }
     
     public void onGameLoop(ActionEvent event) {
     	if (node != null) {
     		collidesWall();
-    		healthGreen.setScaleX(health.get() * .01);
     	}
-
     }
 
 	public void onNetworkEvent(String type, String data) {

@@ -59,13 +59,13 @@ public class Arrow extends JGSprite {
 			if (alive.get()) {
 				JGame.networkManager.sendEvent("HEALTH", sprite.uuid.get());
 				alive.set(false);
-				JGame.networkManager.sendDelete(uuid.get());
+				JGame.spriteManager.deleteSprite(this);
 			}
 		}
 		if (sprite.type.get().equals("ground")) {
 			if (alive.get()) {
 				alive.set(false);
-				JGame.networkManager.sendDelete(uuid.get());
+				JGame.spriteManager.deleteSprite(this);
 			}
 		}
 	}

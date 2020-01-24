@@ -91,16 +91,19 @@ public class JGSpriteManager {
 
     	if (cleanupSprites.size() > 0) {
 			try {
-				JGSprite sprite = cleanupSprites.get(0);
-				if (sprite != null) {
-					System.out.println("DELETING " + sprite.uuid.get() + " - " + sprite.type.get());
-					JGSceneManager.activeScene.get().layers.forEach(layer -> {
-						layer.removeFromLayer(sprite);
-					});
-					sprite.active.set(false);
-					sprite.removeSpriteFromManager(true);
-					cleanupSprites.remove(sprite);
-				}
+				List<JGSprite> copy2 = new ArrayList<>();
+				copy2.addAll(cleanupSprites);
+				cleanupSprites.clear();
+				copy2.forEach(sprite -> {
+					if (sprite != null) {
+						System.out.println("DELETING " + sprite.uuid.get() + " - " + sprite.type.get());
+						JGSceneManager.activeScene.get().layers.forEach(layer -> {
+							layer.removeFromLayer(sprite);
+						});
+						sprite.active.set(false);
+						sprite.removeSpriteFromManager(true);
+					}
+				});
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
