@@ -1,6 +1,8 @@
 package main.GGame;
 
 import javafx.event.ActionEvent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -17,14 +19,26 @@ public class Player extends JGSprite {
 	public float timeout = 40;
 
     public Player() {
-    	Rectangle rectangle = new Rectangle(0, 0, 50, 50);
+
+		uuid.set(JGame.networkManager.self.nick.get());
+
+		Canvas canvas = new Canvas();
+		canvas.setWidth(50);
+		canvas.setHeight(50);
+		width.set(50.0);
+		height.set(50.0);
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.setFill(Color.RED);
+		gc.fillRect(0, 0, 50, 50);
+		gc.setFill(Color.BLACK);
+		gc.fillText(uuid.get(), 8, 25);
 
     	type.set("player");
-		uuid.set(JGame.networkManager.self.nick.get());
+
     	canMove.set(true);
     	active.set(false);
-    	rectangle.setFill(Color.RED);
-    	node.set(rectangle);
+
+    	node.set(canvas);
     	positionX.set(200.0);
     	positionY.set(200.0);
 

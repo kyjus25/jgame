@@ -235,7 +235,6 @@ public class JGNetworkManager extends CommonControls {
                                             if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
                                             if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
                                             if (!uuid.equals("EMPTY")) {newSprite.uuid.set(uuid); }
-                                            System.out.println("CREATING " + newSprite.uuid.get() + " - " + newSprite.type.get());
                                             lastKnownPos.put(newSprite.uuid.get(), new JGCreateRequest(self.nick.get(), newSprite.type.get(), newSprite.positionX.get().toString(), newSprite.positionY.get().toString(), newSprite.uuid.get()));
                                             layer.addToLayer(newSprite, true);
                                             if (!hosting.get()) { newSprite.addSpriteToManager(true); }
