@@ -24,7 +24,6 @@ public class JGUser implements Runnable {
 
     public JGUser(Socket s, JGServer server) throws IOException {
         this.server = server;
-        System.out.println(s);
         running.set(true);
         entry = new BufferedReader(new InputStreamReader(s.getInputStream()));
         leave = new BufferedWriter(new PrintWriter(s.getOutputStream()));
@@ -48,18 +47,20 @@ public class JGUser implements Runnable {
             if (packet != null && !packet.isEmpty() && !packet.startsWith("BEAT") && !packet.startsWith("EXIT")) {
                 try {
                     if (packet.contains("EVENT")) {
-                        JGCreateRequest request = new JGCreateRequest("Host", packet, null, null, null);
+                        JGCreateRequest request = new JGCreateRequest(packet, null, null, null);
                         request.savePos.set(false);
                         server.sendQueue.add(request);
                     } else {
                         JGCreateRequest request = server.getJGCreateRequest(nick.get(), packet);
-                        if (packet.contains("SENDHOST true")) {
-                            request.sender.set("HostOnly");
-                        }
+
                         if (packet.contains("SENDHOST false")) {
-                            request.sender.set("HostOnly");
                             request.savePos.set(false);
                         }
+
+                        if (packet.contains("SENDHOST")) {
+                            server.sendHost("UPDATE " + request.type.get() + " " + request.posX.get() + " " + request.posY.get() + " " + request.uuid.get());
+                        }
+
                         server.sendQueue.add(request);
                     }
                 } catch (Exception e) {

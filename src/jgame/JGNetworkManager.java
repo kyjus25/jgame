@@ -86,22 +86,6 @@ public class JGNetworkManager extends CommonControls {
         initializeHeartBeat();
         while (running.get()) {
             String packet = recieve();
-
-            if (packet.startsWith("LISTUSERS")) {
-                users.clear();
-
-                for (int i = 1; i < packet.split("[ ]").length; i++) {
-                    users.add(new JGUser(packet.split("[ ]")[i]));
-                }
-
-                List<JGSprite> activeUsers = JGame.spriteManager.getSpritesByType(networkSprite.get());
-                activeUsers.forEach(activeUser -> {
-                    List<JGUser> foundUser = users.stream().filter(p -> p.nick.get().equals(activeUser.uuid.get())).collect(Collectors.toList());
-                    if (foundUser.size() == 0) {
-                        JGame.spriteManager.deleteSprite(activeUser);
-                    }
-                });
-            }
             if (packet.startsWith("500") || packet.startsWith("400")) { running.set(false); }
             if (!packet.isEmpty() && !packet.startsWith("OK")) { packetStream.add(packet); }
         }
@@ -136,7 +120,7 @@ public class JGNetworkManager extends CommonControls {
 
     public void sendDelete(String uuid) {
         if (hosting.get()) {
-            sendEvent("DELETE", uuid);
+            submit("DELETE" + " " + uuid + " \n");
         }
     }
 
@@ -154,21 +138,8 @@ public class JGNetworkManager extends CommonControls {
         String s = "";
         try {
             s = enter.readLine();
-        } catch (IOException ex) {
-
-        }
+        } catch (IOException ex) {}
         return s;
-    }
-
-    public int getPlayerNumber() {
-        int playerNumber = 0;
-        for (int i = 0; i < users.size(); i ++) {
-            if (users.get(i).nick.get().equals(self.nick.get())) {
-                playerNumber = i + 1;
-            }
-        }
-
-        return playerNumber;
     }
 
     public void onGameLoop(ActionEvent e) {
@@ -181,33 +152,49 @@ public class JGNetworkManager extends CommonControls {
             packets.forEach(packet -> {
                 if (packet != null) {
 
+                    System.out.println(packet);
+
+                    if (packet.startsWith("LIST")) {
+                        users.clear();
+
+                        for (int i = 1; i < packet.split("[ ]").length; i++) {
+                            users.add(new JGUser(packet.split("[ ]")[i]));
+                        }
+
+                        List<JGSprite> activeUsers = JGame.spriteManager.getSpritesByType(networkSprite.get());
+                        activeUsers.forEach(activeUser -> {
+                            List<JGUser> foundUser = users.stream().filter(p -> p.nick.get().equals(activeUser.uuid.get())).collect(Collectors.toList());
+                            if (foundUser.size() == 0) {
+                                JGame.spriteManager.deleteSprite(activeUser);
+                            }
+                        });
+                    }
+
                     if (packet.startsWith("SCENE") && !hosting.get()) {
                         String sceneName = packet.split("[ ]")[1];
                         JGame.sceneManager.changeSceneByName(sceneName);
                     }
 
                     if (packet.startsWith("EVENT")) {
-                        if (packet.split("[ ]")[1].equals("DELETE")) {
-                            JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[2]);
+                        listeners.forEach((item) -> {
+                            String substring = packet.split("EVENT " + packet.split("[ ]")[1] + " ")[1];
+                            item.changed(packet.split("[ ]")[1], substring);
+                        });
+                    }
 
-                            if (sprite != null) {
-                                JGCreateRequest lastKnown = lastKnownPos.get(sprite.uuid.get());
-                                if (lastKnown != null) {
-                                    lastKnown.deleted.set(true);
-                                    lastKnownPos.put(lastKnown.uuid.get(), lastKnown);
-                                }
-                                JGame.spriteManager.deleteSprite(sprite);
+                    if (packet.startsWith("DELETE")) {
+                        JGSprite sprite = JGame.spriteManager.getSpriteByUUID(packet.split("[ ]")[1]);
+                        if (sprite != null) {
+                            JGCreateRequest lastKnown = lastKnownPos.get(sprite.uuid.get());
+                            if (lastKnown != null) {
+                                lastKnown.deleted.set(true);
+                                lastKnownPos.put(lastKnown.uuid.get(), lastKnown);
                             }
-                        } else {
-                            listeners.forEach((item) -> {
-                                String substring = packet.split("EVENT " + packet.split("[ ]")[1] + " ")[1];
-                                item.changed(packet.split("[ ]")[1], substring);
-                            });
+                            JGame.spriteManager.deleteSprite(sprite);
                         }
                     }
 
-                    if (packet.contains(":") && !packet.startsWith(self.nick.get())) {
-
+                    if (packet.startsWith("UPDATE")) {
                         String[] splitter = packet.split(" ");
                         String type = splitter[1];
                         String posX = splitter[2];
@@ -223,7 +210,7 @@ public class JGNetworkManager extends CommonControls {
                             // Update it
                             sprite.positionX.set(Double.parseDouble(posX));
                             sprite.positionY.set(Double.parseDouble(posY));
-                            lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                            lastKnownPos.put(uuid, new JGCreateRequest(type, posX, posY, uuid));
                         } else {
                             // Create it
                             String finalType = type;
@@ -235,7 +222,7 @@ public class JGNetworkManager extends CommonControls {
                                             if (!posX.equals("EMPTY")) { newSprite.positionX.set(Double.parseDouble(posX)); }
                                             if (!posY.equals("EMPTY")) { newSprite.positionY.set(Double.parseDouble(posY)); }
                                             if (!uuid.equals("EMPTY")) {newSprite.uuid.set(uuid); }
-                                            lastKnownPos.put(newSprite.uuid.get(), new JGCreateRequest(self.nick.get(), newSprite.type.get(), newSprite.positionX.get().toString(), newSprite.positionY.get().toString(), newSprite.uuid.get()));
+                                            lastKnownPos.put(newSprite.uuid.get(), new JGCreateRequest(newSprite.type.get(), newSprite.positionX.get().toString(), newSprite.positionY.get().toString(), newSprite.uuid.get()));
                                             layer.addToLayer(newSprite, true);
                                             if (!hosting.get()) { newSprite.addSpriteToManager(true); }
                                         }
@@ -260,13 +247,13 @@ public class JGNetworkManager extends CommonControls {
                 String posY = sprite.positionY.get().toString();
                 String uuid = sprite.uuid.get();
                 if (!lastKnownPos.containsKey(uuid)) {
-                    lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                    lastKnownPos.put(uuid, new JGCreateRequest(type, posX, posY, uuid));
                     submit(type + " " + posX + " " + posY + " " + uuid);
                 } else {
                     String oldPosX = lastKnownPos.get(sprite.uuid.get()).posX.get();
                     String oldPosY = lastKnownPos.get(sprite.uuid.get()).posY.get();
                     if (!posX.equals(oldPosX) || !posY.equals(oldPosY)) {
-                        lastKnownPos.put(uuid, new JGCreateRequest(self.nick.get(), type, posX, posY, uuid));
+                        lastKnownPos.put(uuid, new JGCreateRequest(type, posX, posY, uuid));
                         submit(type + " " + posX + " " + posY + " " + uuid);
                     }
                 }
@@ -287,6 +274,17 @@ public class JGNetworkManager extends CommonControls {
                 }
             }
         }).start();
+    }
+
+    public int getPlayerNumber() {
+        int playerNumber = 0;
+        for (int i = 0; i < users.size(); i ++) {
+            if (users.get(i).nick.get().equals(self.nick.get())) {
+                playerNumber = i + 1;
+            }
+        }
+
+        return playerNumber;
     }
 
     public static void addEventHandler(NetworkEvent toAdd) {

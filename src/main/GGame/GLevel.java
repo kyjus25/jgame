@@ -56,7 +56,7 @@ public class GLevel extends JGScene {
 	
 	public void onGameLoop(ActionEvent event) {
 		
-		if (playerLayer != null) {
+		if (playerLayer != null && JGame.spriteManager.getSpritesByType("player").size() != 0) {
 
 			JGSprite player = JGame.spriteManager.getSpritesByType("player").get(0);
 			Double playerSpeed = 5.0;
